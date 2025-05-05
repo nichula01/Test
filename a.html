@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasindu Weerasingha | AI Research Portfolio</title>
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --dark: #1e1e2c;
+            --light: #f8f9fa;
+            --accent: #4cc9f0;
+            --text: #333;
+            --secondary: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--dark) 0%, #2d2d42 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="none" width="100" height="100"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="white" stroke-width="1"/></svg>');
+            background-size: 20px 20px;
+        }
+        
+        nav {
+            background-color: var(--dark);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        nav ul li {
+            margin: 0 1rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+        
+        nav ul li a.active {
+            background-color: var(--primary);
+        }
+        
+        section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            display: inline-block;
+            background-color: var(--light);
+            padding: 0 1rem;
+            font-size: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+            left: 0;
+            top: 50%;
+            z-index: 0;
+        }
+        
+        .featured-project {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 4rem;
+        }
+        
+        .featured-project-image {
+            height: 400px;
+            background: linear-gradient(135deg, #4cc9f0 0%, #3a86ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .featured-project-content {
+            padding: 2rem;
+        }
+        
+        .featured-project-content h3 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: #e9ecef;
+            color: var(--secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .weekly-updates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .update-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .update-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .update-card-image {
+            height: 180px;
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .update-card-content {
+            padding: 1.5rem;
+        }
+        
+        .update-card-content h3 {
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+        
+        .update-date {
+            color: var(--secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #2a75e6;
+        }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-image {
+            background-color: #e9ecef;
+            height: 300px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .social-links {
+            margin: 1.5rem 0;
+        }
+        
+        .social-links a {
+            color: white;
+            margin: 0 0.75rem;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            color: #adb5bd;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .weekly-updates {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-project-image {
+                height: 250px;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bg"></div>
+        <div class="header-content">
+            <h1>Pasindu Weerasingha</h1>
+            <p>AI Researcher specializing in Image Artifact Detection using CNNs</p>
+        </div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#projects" class="active">Projects</a></li>
+            <li><a href="#weekly-updates">Weekly Updates</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <section id="projects">
+        <div class="section-title">
+            <h2>Featured Project</h2>
+        </div>
+        
+        <div class="featured-project animate">
+            <div class="featured-project-image">
+                <div>
+                    <h2>AI-Driven Artifact Detection and Evaluation in Images</h2>
+                    <p>Using Convolutional Neural Networks for Image Quality Assessment</p>
+                </div>
+            </div>
+            <div class="featured-project-content">
+                <h3>AI-Driven Artifact Detection and Evaluation in Images</h3>
+                <div class="tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">Computer Vision</span>
+                    <span class="tag">CNN</span>
+                    <span class="tag">Image Processing</span>
+                    <span class="tag">Artifact Classification</span>
+                </div>
+                <p style="margin-top: 1.5rem;">
+                    This project develops an automated image artifact classification system using Convolutional Neural Networks (CNNs). 
+                    The goal is to categorize images based on the type of visual artifacts they contain, which is essential for 
+                    improving image processing systems.
+                </p>
+                <p style="margin-top: 1rem;">
+                    The classifier is trained to recognize and categorize images into four types of artifacts. By leveraging 
+                    deep learning and CNNs, the system learns to extract and analyze features from images to accurately 
+                    classify the type of artifact present.
+                </p>
+                <a href="#" class="btn">View Project Details</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="weekly-updates">
+        <div class="section-title">
+            <h2>Weekly Progress Updates</h2>
+        </div>
+        
+        <div class="weekly-updates">
+            <div class="update-card animate delay-1">
+                <div class="update-card-image">Week 1</div>
+                <div class="update-card-content">
+                    <span class="update-date">May 1, 2025</span>
+                    <h3>Project Setup and Dataset Collection</h3>
+                    <p>Initial setup of the development environment and collection of image datasets containing various artifacts for training the CNN model.</p>
+                    <a href="#" class="btn">Read More</a>
+                </div>
+            </div>
+            
+            <div class="update-card animate delay-2">
+                <div class="update-card-image">Week 2</div>
+                <div class="update-card-content">
+                    <span class="update-date">May 8, 2025</span>
+                    <h3>Data Preprocessing and Augmentation</h3>
+                    <p>Implementation of preprocessing techniques and data augmentation strategies to enhance the training dataset and improve model generalization.</p>
+                    <a href="#" class="btn">Read More</a>
+                </div>
+            </div>
+            
+            <div class="update-card animate delay-3">
+                <div class="update-card-image">Week 3</div>
+                <div class="update-card-content">
+                    <span class="update-date">May 15, 2025</span>
+                    <h3>CNN Architecture Design</h3>
+                    <p>Design and implementation of the convolutional neural network architecture optimized for image artifact detection.</p>
+                    <a href="#" class="btn">Read More</a>
+                </div>
+            </div>
+            
+            <div class="update-card animate delay-1">
+                <div class="update-card-image">Week 4</div>
+                <div class="update-card-content">
+                    <span class="update-date">May 22, 2025</span>
+                    <h3>Model Training and Initial Results</h3>
+                    <p>Training the CNN model on the prepared dataset and evaluation of initial performance metrics and classification accuracy.</p>
+                    <a href="#" class="btn">Read More</a>
+                </div>
+            </div>
+            
+            <div class="update-card animate delay-2">
+                <div class="update-card-image">Week 5</div>
+                <div class="update-card-content">
+                    <span class="update-date">May 29, 2025</span>
+                    <h3>Model Optimization</h3>
+                    <p>Fine-tuning the model hyperparameters and architecture to improve detection accuracy and reduce false positives.</p>
+                    <a href="#" class="btn">Read More</a>
+                </div>
+            </div>
+            
+            <div class="update-card animate delay-3">
+                <div class="update-card-image">Week 6</div>
+                <div class="update-card-content">
+                    <span class="update-date">June 5, 2025</span>
+                    <h3>Evaluation and Analysis</h3>
+                    <p>Comprehensive evaluation of model performance across different artifact types and analysis of classification patterns.</p>
+                    <a href="#" class="btn">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="about">
+        <div class="section-title">
+            <h2>About Me</h2>
+        </div>
+        
+        <div class="about-grid animate">
+            <div class="about-image">
+                Profile Photo
+            </div>
+            <div>
+                <h3>Pasindu Weerasingha</h3>
+                <p style="margin-top: 1rem;">
+                    I am an AI researcher specializing in computer vision and deep learning, with a focus on image quality assessment
+                    and artifact detection. My research aims to improve automated systems for identifying and classifying various
+                    types of visual artifacts in digital images.
+                </p>
+                <p style="margin-top: 1rem;">
+                    With expertise in convolutional neural networks and image processing techniques, I develop innovative solutions
+                    to enhance image quality assessment systems and contribute to the advancement of computer vision applications.
+                </p>
+                
+                <h4 style="margin-top: 2rem;">Technical Skills</h4>
+                <div class="skills-list">
+                    <span class="tag">Python</span>
+                    <span class="tag">TensorFlow</span>
+                    <span class="tag">PyTorch</span>
+                    <span class="tag">Computer Vision</span>
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">CNN Architecture</span>
+                    <span class="tag">Image Processing</span>
+                    <span class="tag">Data Analysis</span>
+                    <span class="tag">Neural Networks</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact">
+        <div class="section-title">
+            <h2>Contact Me</h2>
+        </div>
+        
+        <div style="text-align: center;" class="animate">
+            <p>Feel free to reach out for collaboration opportunities or to discuss my research.</p>
+            <p style="margin-top: 1rem;"><strong>Email:</strong> pasindu.weerasingha@example.com</p>
+            
+            <div class="social-links">
+                <!-- Social links placeholders -->
+                <a href="#">LinkedIn</a>
+                <a href="#">GitHub</a>
+                <a href="#">Twitter</a>
+                <a href="#">ResearchGate</a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div>
+            <h3>Pasindu Weerasingha</h3>
+            <p>AI-Driven Artifact Detection and Evaluation in Images</p>
+        </div>
+        
+        <div class="social-links">
+            <a href="#">LinkedIn</a>
+            <a href="#">GitHub</a>
+            <a href="#">Twitter</a>
+            <a href="#">ResearchGate</a>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Pasindu Weerasingha. All rights reserved.
+        </div>
+    </footer>
+    
+    <script>
+        // Simple script to handle navigation highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('nav ul li a');
+            const sections = document.querySelectorAll('section');
+            
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if(pageYOffset >= (sectionTop - sectionHeight/3)) {
+                        current = section.getAttribute('id');
+                    }
+                })
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                })
+            })
+            
+            // Animation on scroll
+            const animatedElements = document.querySelectorAll('.animate');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
