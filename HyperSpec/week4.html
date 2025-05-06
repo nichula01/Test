@@ -1,0 +1,555 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 2 – Hyperspectral Imaging Project</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #3498db;
+      --text-color: #ecf0f1;
+      --earth-green: #27ae60;
+      --earth-brown: #795548;
+      --space-blue: #1a237e;
+      --card-bg: rgba(52, 73, 94, 0.3);
+      --progress-bg: rgba(39, 174, 96, 0.2);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #121212;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--text-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.9);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      z-index: 101;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .resource-links {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .resource-links a {
+      display: block;
+      color: var(--accent-color);
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    
+    .resource-links a:hover {
+      color: var(--text-color);
+    }
+    
+    .resource-links a i {
+      margin-right: 0.5rem;
+    }
+    
+    .next-week {
+      background-color: rgba(26, 35, 126, 0.3);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(52, 73, 94, 0.5);
+      padding: 0.8rem;
+      border-radius: 5px;
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .image-container {
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .caption {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    @media (max-width: 768px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">HyperSpec</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>Week 2: Data Processing & Dimensionality Reduction</h1>
+    <p>Preparing hyperspectral data for analysis using preprocessing techniques and advanced algorithms</p>
+    
+  </header>
+
+  <div class="content-container">
+    <div class="content-grid">
+      <div class="topic-card">
+        <h3><i class="fas fa-cogs"></i> Data Preprocessing</h3>
+        <p>Essential techniques for preparing hyperspectral data for analysis.</p>
+        <ul>
+          <li>Radiometric calibration for accurate reflectance values</li>
+          <li>Atmospheric correction to remove atmospheric influence</li>
+          <li>Noise reduction using spectral smoothing algorithms</li>
+          <li>Standardization and normalization of spectral bands</li>
+        </ul>
+        <div class="resource-links">
+          <a href="#"><i class="fas fa-file-pdf"></i> HSI Preprocessing Techniques (PDF)</a>
+          <a href="#"><i class="fab fa-github"></i> Python Preprocessing Library</a>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3><i class="fas fa-compress-arrows-alt"></i> Dimensionality Reduction</h3>
+        <p>Methods to reduce the high-dimensional hyperspectral data while preserving information.</p>
+        <ul>
+          <li>Principal Component Analysis (PCA) implementation</li>
+          <li>Independent Component Analysis (ICA) for statistical independence</li>
+          <li>Minimum Noise Fraction (MNF) transformation</li>
+          <li>Band selection techniques for optimal spectral subset</li>
+        </ul>
+        <div class="resource-links">
+          <a href="#"><i class="fab fa-youtube"></i> PCA for Hyperspectral Images</a>
+          <a href="#"><i class="fas fa-code"></i> Scikit-learn PCA Tutorial</a>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3><i class="fas fa-satellite"></i> Sentinel-2 Data Processing</h3>
+        <p>Working with Sentinel-2 multispectral satellite imagery.</p>
+        <ul>
+          <li>Downloading and organizing Sentinel-2 data products</li>
+          <li>Band extraction and geospatial preprocessing</li>
+          <li>Computing vegetation indices (NDVI, EVI, SAVI)</li>
+          <li>Spatial resolution harmonization between bands</li>
+        </ul>
+        <div class="resource-links">
+          <a href="https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi"><i class="fas fa-globe"></i> Sentinel-2 User Guide</a>
+          <a href="#"><i class="fab fa-python"></i> Sentinel-2 Data Processing Tutorial</a>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3><i class="fas fa-project-diagram"></i> Advanced PCA Applications</h3>
+        <p>Using PCA for endmember extraction and feature enhancement.</p>
+        <ul>
+          <li>PCA for endmember initialization in unmixing workflows</li>
+          <li>Selection of optimal number of principal components</li>
+          <li>Visual interpretation of principal component bands</li>
+          <li>Evaluation of information content in reduced dimensions</li>
+        </ul>
+        <div class="resource-links">
+          <a href="#"><i class="fas fa-chart-line"></i> Advanced PCA Techniques for HSI</a>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3><i class="fas fa-code-branch"></i> ICA Implementation</h3>
+        <p>Applying Independent Component Analysis to separate mixed spectral signatures.</p>
+        <ul>
+          <li>Mathematical foundations of ICA for spectral unmixing</li>
+          <li>FastICA algorithm implementation and optimization</li>
+          <li>Comparison of ICA vs. PCA for endmember extraction</li>
+          <li>Parameter tuning for optimal source separation</li>
+        </ul>
+        <div class="resource-links">
+          <a href="#"><i class="fab fa-github"></i> ICA Implementation Repository</a>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3><i class="fas fa-database"></i> Dataset Preparation</h3>
+        <p>Organizing hyperspectral datasets for machine learning applications.</p>
+        <ul>
+          <li>Data splitting strategies (training/validation/test)</li>
+          <li>Creating balanced samples for supervised learning</li>
+          <li>Augmentation techniques for hyperspectral data</li>
+          <li>Cross-validation approaches for robust model evaluation</li>
+        </ul>
+        <div class="resource-links">
+          <a href="#"><i class="fas fa-file-code"></i> HSI Dataset Preparation Guide</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-card" style="margin-top: 2rem;">
+      <h3><i class="fas fa-laptop-code"></i> Practical Work: Urban_6 Dataset Processing</h3>
+      <p>Applied dimensionality reduction techniques to the Urban_6 dataset.</p>
+      <ul>
+        <li>Implemented PCA to reduce the 162 bands to 10 principal components</li>
+        <li>Visualized the variance explained by each principal component</li>
+        <li>Applied ICA to extract statistically independent sources</li>
+        <li>Compared PCA and ICA results for endmember identification</li>
+        <li>Created false color composites of principal components</li>
+      </ul>
+      
+      <div class="image-container">
+        <img src="images/pca_results.png" alt="PCA Results Visualization" class="contained-image">
+        <p class="caption">PCA applied to Urban_6 dataset: First 3 principal components displayed as RGB composite</p>
+      </div>
+      
+      <div class="image-container">
+        <img src="images/variance_explained.png" alt="Variance Explained by Principal Components" class="contained-image">
+        <p class="caption">Cumulative variance explained by principal components</p>
+      </div>
+      
+      <div class="resource-links">
+        <a href="https://colab.research.google.com/drive/1dTZ6uy_dKL8h2XcPRGZ3gvH4PkE7SbW4?usp=sharing"><i class="fab fa-google"></i> Google Colab Notebook with PCA/ICA Analysis</a>
+      </div>
+    </div>
+
+    <div class="topic-card" style="margin-top: 2rem;">
+      <h3><i class="fas fa-signal"></i> Spectral Indices</h3>
+      <p>Developing and using spectral indices for environmental monitoring.</p>
+      <ul>
+        <li>Vegetation indices (NDVI, EVI, SAVI) calculation and interpretation</li>
+        <li>Water indices (NDWI, MNDWI) for water body detection</li>
+        <li>Soil and mineral indices for geological applications</li>
+        <li>Urban and built-up area indices for urban mapping</li>
+      </ul>
+      
+      <div class="image-container">
+        <img src="images/ndvi_map.png" alt="NDVI Map from Sentinel-2" class="contained-image">
+        <p class="caption">NDVI vegetation health map calculated from Sentinel-2 data</p>
+      </div>
+      
+      <div class="resource-links">
+        <a href="#"><i class="fas fa-leaf"></i> Spectral Indices Reference Guide</a>
+      </div>
+    </div>
+
+    <div class="next-week">
+      <h3><i class="fas fa-calendar-alt"></i> Next Week's Plan</h3>
+      <ul>
+        <li>Implement neural network-based spectral unmixing algorithms</li>
+        <li>Explore advanced spectral libraries for endmember comparison</li>
+        <li>Develop custom unmixing performance metrics</li>
+        <li>Begin integration of spatial-spectral analysis techniques</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p class="footer-text">
+      © 2025 Hyperspectral Imaging Project. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    document.querySelector('.dropbtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const dropdownContent = this.nextElementSibling;
+      dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.querySelector('.dropdown');
+      if (!dropdown.contains(e.target)) {
+        document.querySelector('.dropdown-content').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
