@@ -150,21 +150,13 @@
       padding: 2rem;
     }
     
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-    
     .topic-card {
       background-color: var(--card-bg);
       border-radius: 10px;
-      padding: 1.5rem;
+      padding: 2rem;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s, box-shadow 0.3s;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
+      margin-bottom: 2rem;
     }
     
     .topic-card:hover {
@@ -174,8 +166,8 @@
     
     .topic-card h3 {
       color: var(--accent-color);
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -185,17 +177,30 @@
       color: var(--earth-green);
     }
     
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
     .topic-card p {
       margin-bottom: 1rem;
     }
     
     .topic-card ul {
       list-style-type: none;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     .topic-card ul li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
       padding-left: 1.5rem;
       position: relative;
     }
@@ -209,7 +214,7 @@
     }
     
     .resource-links {
-      margin-top: auto;
+      margin-top: 1.5rem;
       padding-top: 1rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -218,8 +223,9 @@
       display: block;
       color: var(--accent-color);
       text-decoration: none;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
       transition: color 0.3s;
+      font-size: 1.05rem;
     }
     
     .resource-links a:hover {
@@ -228,6 +234,24 @@
     
     .resource-links a i {
       margin-right: 0.5rem;
+    }
+    
+    .image-container {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .caption {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
     }
     
     .next-week {
@@ -240,7 +264,7 @@
     
     .next-week h3 {
       color: var(--accent-color);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       font-size: 1.5rem;
       display: flex;
       align-items: center;
@@ -302,28 +326,7 @@
       color: rgba(255, 255, 255, 0.6);
     }
     
-    .image-container {
-      margin: 1.5rem 0;
-      text-align: center;
-    }
-    
-    .contained-image {
-      max-width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .caption {
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
     @media (max-width: 768px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-      
       .navbar {
         padding: 1rem;
       }
@@ -373,161 +376,129 @@
   </nav>
 
   <header class="page-header">
-    <h1>Week 2: Data Processing & Dimensionality Reduction</h1>
-    <p>Preparing hyperspectral data for analysis using preprocessing techniques and advanced algorithms</p>
-    
-    <div class="progress-bar">
-      Project Progress: 14% Complete
-    </div>
+    <h1>Week 2: Satellite Data Acquisition & Processing</h1>
+    <p>Exploring Copernicus Hub and processing Sentinel-2 data for Sri Lanka</p>
   </header>
 
   <div class="content-container">
-    <div class="content-grid">
-      <div class="topic-card">
-        <h3><i class="fas fa-cogs"></i> Data Preprocessing</h3>
-        <p>Essential techniques for preparing hyperspectral data for analysis.</p>
-        <ul>
-          <li>Radiometric calibration for accurate reflectance values</li>
-          <li>Atmospheric correction to remove atmospheric influence</li>
-          <li>Noise reduction using spectral smoothing algorithms</li>
-          <li>Standardization and normalization of spectral bands</li>
-        </ul>
-        <div class="resource-links">
-          <a href="#"><i class="fas fa-file-pdf"></i> HSI Preprocessing Techniques (PDF)</a>
-          <a href="#"><i class="fab fa-github"></i> Python Preprocessing Library</a>
-        </div>
-      </div>
-
-      <div class="topic-card">
-        <h3><i class="fas fa-compress-arrows-alt"></i> Dimensionality Reduction</h3>
-        <p>Methods to reduce the high-dimensional hyperspectral data while preserving information.</p>
-        <ul>
-          <li>Principal Component Analysis (PCA) implementation</li>
-          <li>Independent Component Analysis (ICA) for statistical independence</li>
-          <li>Minimum Noise Fraction (MNF) transformation</li>
-          <li>Band selection techniques for optimal spectral subset</li>
-        </ul>
-        <div class="resource-links">
-          <a href="#"><i class="fab fa-youtube"></i> PCA for Hyperspectral Images</a>
-          <a href="#"><i class="fas fa-code"></i> Scikit-learn PCA Tutorial</a>
-        </div>
-      </div>
-
-      <div class="topic-card">
-        <h3><i class="fas fa-satellite"></i> Sentinel-2 Data Processing</h3>
-        <p>Working with Sentinel-2 multispectral satellite imagery.</p>
-        <ul>
-          <li>Downloading and organizing Sentinel-2 data products</li>
-          <li>Band extraction and geospatial preprocessing</li>
-          <li>Computing vegetation indices (NDVI, EVI, SAVI)</li>
-          <li>Spatial resolution harmonization between bands</li>
-        </ul>
-        <div class="resource-links">
-          <a href="https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi"><i class="fas fa-globe"></i> Sentinel-2 User Guide</a>
-          <a href="#"><i class="fab fa-python"></i> Sentinel-2 Data Processing Tutorial</a>
-        </div>
-      </div>
-
-      <div class="topic-card">
-        <h3><i class="fas fa-project-diagram"></i> Advanced PCA Applications</h3>
-        <p>Using PCA for endmember extraction and feature enhancement.</p>
-        <ul>
-          <li>PCA for endmember initialization in unmixing workflows</li>
-          <li>Selection of optimal number of principal components</li>
-          <li>Visual interpretation of principal component bands</li>
-          <li>Evaluation of information content in reduced dimensions</li>
-        </ul>
-        <div class="resource-links">
-          <a href="#"><i class="fas fa-chart-line"></i> Advanced PCA Techniques for HSI</a>
-        </div>
-      </div>
-
-      <div class="topic-card">
-        <h3><i class="fas fa-code-branch"></i> ICA Implementation</h3>
-        <p>Applying Independent Component Analysis to separate mixed spectral signatures.</p>
-        <ul>
-          <li>Mathematical foundations of ICA for spectral unmixing</li>
-          <li>FastICA algorithm implementation and optimization</li>
-          <li>Comparison of ICA vs. PCA for endmember extraction</li>
-          <li>Parameter tuning for optimal source separation</li>
-        </ul>
-        <div class="resource-links">
-          <a href="#"><i class="fab fa-github"></i> ICA Implementation Repository</a>
-        </div>
-      </div>
-
-      <div class="topic-card">
-        <h3><i class="fas fa-database"></i> Dataset Preparation</h3>
-        <p>Organizing hyperspectral datasets for machine learning applications.</p>
-        <ul>
-          <li>Data splitting strategies (training/validation/test)</li>
-          <li>Creating balanced samples for supervised learning</li>
-          <li>Augmentation techniques for hyperspectral data</li>
-          <li>Cross-validation approaches for robust model evaluation</li>
-        </ul>
-        <div class="resource-links">
-          <a href="#"><i class="fas fa-file-code"></i> HSI Dataset Preparation Guide</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="topic-card" style="margin-top: 2rem;">
-      <h3><i class="fas fa-laptop-code"></i> Practical Work: Urban_6 Dataset Processing</h3>
-      <p>Applied dimensionality reduction techniques to the Urban_6 dataset.</p>
+    <div class="topic-card">
+      <h3><i class="fas fa-satellite"></i> Week 2 Progress: Sentinel-2 Data Exploration</h3>
+      <p>This week focused on accessing, understanding, and processing Sentinel-2 satellite imagery for Sri Lanka through the Copernicus Open Access Hub.</p>
+      
+      <h4><i class="fas fa-globe"></i> Copernicus Hub Exploration</h4>
+      <p>Successfully explored the Copernicus Open Access Hub platform to search, filter, and download satellite imagery.</p>
       <ul>
-        <li>Implemented PCA to reduce the 162 bands to 10 principal components</li>
-        <li>Visualized the variance explained by each principal component</li>
-        <li>Applied ICA to extract statistically independent sources</li>
-        <li>Compared PCA and ICA results for endmember identification</li>
-        <li>Created false color composites of principal components</li>
+        <li>Created a Copernicus account and learned the navigation interface</li>
+        <li>Set up search filters to focus on Sri Lanka geographical area</li>
+        <li>Applied filter parameters for cloud coverage, acquisition dates, and sensing orbit</li>
+        <li>Downloaded multiple Sentinel-2 Level-2A products over key regions of interest</li>
+        <li>Organized downloaded data into a structured project repository</li>
       </ul>
       
       <div class="image-container">
-        <img src="images/pca_results.png" alt="PCA Results Visualization" class="contained-image">
-        <p class="caption">PCA applied to Urban_6 dataset: First 3 principal components displayed as RGB composite</p>
+        <img src="images/copernicus.png" alt="Copernicus Hub Interface showing Sri Lanka region" class="contained-image">
+        <p class="caption">Copernicus Hub search interface with Sri Lanka area of interest selected</p>
       </div>
       
-      <div class="image-container">
-        <img src="images/variance_explained.png" alt="Variance Explained by Principal Components" class="contained-image">
-        <p class="caption">Cumulative variance explained by principal components</p>
-      </div>
-      
-      <div class="resource-links">
-        <a href="https://colab.research.google.com/drive/1dTZ6uy_dKL8h2XcPRGZ3gvH4PkE7SbW4?usp=sharing"><i class="fab fa-google"></i> Google Colab Notebook with PCA/ICA Analysis</a>
-      </div>
-    </div>
-
-    <div class="topic-card" style="margin-top: 2rem;">
-      <h3><i class="fas fa-signal"></i> Spectral Indices</h3>
-      <p>Developing and using spectral indices for environmental monitoring.</p>
+      <h4><i class="fas fa-layer-group"></i> Sentinel-2 Data & Band Analysis</h4>
+      <p>Studied the structure and characteristics of Sentinel-2 multispectral imagery.</p>
       <ul>
-        <li>Vegetation indices (NDVI, EVI, SAVI) calculation and interpretation</li>
-        <li>Water indices (NDWI, MNDWI) for water body detection</li>
-        <li>Soil and mineral indices for geological applications</li>
-        <li>Urban and built-up area indices for urban mapping</li>
+        <li>Analyzed the 13 spectral bands of Sentinel-2 and their specific applications</li>
+        <li>Compared the different spatial resolutions (10m, 20m, 60m) of various bands</li>
+        <li>Studied the metadata included in Sentinel-2 products</li>
+        <li>Learned about Level-1C (Top of Atmosphere) vs. Level-2A (Bottom of Atmosphere) products</li>
+        <li>Examined the spectral response functions for each band</li>
       </ul>
       
-      <div class="image-container">
-        <img src="images/ndvi_map.png" alt="NDVI Map from Sentinel-2" class="contained-image">
-        <p class="caption">NDVI vegetation health map calculated from Sentinel-2 data</p>
-      </div>
+      <table style="width: 100%; margin: 1.5rem 0; border-collapse: collapse; color: var(--text-color); background-color: rgba(52, 73, 94, 0.2);">
+        <tr style="background-color: rgba(52, 73, 94, 0.5);">
+          <th style="padding: 10px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Band</th>
+          <th style="padding: 10px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Central Wavelength (nm)</th>
+          <th style="padding: 10px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Resolution (m)</th>
+          <th style="padding: 10px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Primary Use</th>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">B2 (Blue)</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">490</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">10</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Aerosol detection, coastal water mapping</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">B3 (Green)</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">560</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">10</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Vegetation peak reflectance</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">B4 (Red)</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">665</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">10</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Vegetation discrimination</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">B8 (NIR)</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">842</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">10</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Vegetation analysis, biomass content</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">B11 (SWIR)</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">1610</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">20</td>
+          <td style="padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Snow/ice/cloud discrimination</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px;">B12 (SWIR)</td>
+          <td style="padding: 8px;">2190</td>
+          <td style="padding: 8px;">20</td>
+          <td style="padding: 8px;">Soil and mineral mapping</td>
+        </tr>
+      </table>
       
-      <div class="resource-links">
-        <a href="#"><i class="fas fa-leaf"></i> Spectral Indices Reference Guide</a>
-      </div>
-    </div>
+      <h4><i class="fas fa-laptop-code"></i> Practical Work & Data Processing</h4>
+<p>Developed Python workflows to visualize and analyze Sentinel-2 satellite imagery for a selected region in Sri Lanka.</p>
+<ul>
+  <li>Used Python libraries such as <code>rasterio</code>, <code>numpy</code>, and <code>matplotlib</code> to read and process satellite data</li>
+  <li>Visualized individual bands (Red, Green, Blue) and created true color composite imagery</li>
+  <li>Calculated NDVI (Normalized Difference Vegetation Index) to assess vegetation health</li>
+</ul>
 
+<div class="image-container">
+  <img src="images/truecolur.png" alt="True Color Composite" class="contained-image">
+  <p class="caption">True color composite created from Sentinel-2 Red, Green, and Blue bands</p>
+</div>
+
+<div class="image-container">
+  <img src="images/band.png" alt="NDVI Map of Sri Lanka region" class="contained-image">
+  <p class="caption">Visualization of three bands</p>
+</div>
+
+<div class="image-container">
+  <img src="images/vegetation.png" alt="True Color Composite" class="contained-image">
+  <p class="caption">NDVI map generated from Sentinel-2 imagery showing vegetation distribution in the selected area</p>
+</div>
+
+<div class="pdf-viewer-section">
+  <h3><i class="fas fa-file-pdf"></i> Urban_6 Dataset Analysis</h3>
+  <p>View the complete analysis document directly on this page.</p>
+  <div class="pdf-container">
+    <iframe src="resources/sentinal.pdf" width="100%" height="600px"></iframe>
+  </div>
+</div>
+
+<!--
     <div class="next-week">
       <h3><i class="fas fa-calendar-alt"></i> Next Week's Plan</h3>
       <ul>
-        <li>Implement neural network-based spectral unmixing algorithms</li>
-        <li>Explore advanced spectral libraries for endmember comparison</li>
-        <li>Develop custom unmixing performance metrics</li>
-        <li>Begin integration of spatial-spectral analysis techniques</li>
+        <li>Implement advanced preprocessing techniques for Sentinel-2 data</li>
+        <li>Perform time-series analysis to detect changes in land cover</li>
+        <li>Explore machine learning approaches for land cover classification</li>
+        <li>Begin developing a cloud detection and removal workflow</li>
+        <li>Compare results with other available satellite data sources</li>
       </ul>
     </div>
   </div>
-
+-->
   <footer>
     <div class="social-links">
       <a href="#"><i class="fab fa-github"></i></a>
