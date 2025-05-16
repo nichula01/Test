@@ -352,7 +352,7 @@
 </head>
 <body>
   <nav class="navbar">
-    <a href="index.html" class="logo">HyperSpec</a>
+    <a href="index.html" class="logo">E/20/425</a>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <div class="dropdown">
@@ -381,8 +381,8 @@
   </nav>
 
   <header class="page-header">
-    <h1>Week 3: Remote Sensing of the Sundarbans</h1>
-    <p>Analysis of Sentinel-2 satellite imagery for vegetation and water mapping</p>
+    <h1>Week 3: Remote Sensing of the Sundarbans Island and study about linear unmixing</h1>
+    <p>Analysis of Sentinel-2 satellite imagery for vegetation and water mapping and study about linear unmixing</p>
   </header>
 
   <div class="content-container">
@@ -443,15 +443,83 @@
       </div>
     </div>
 
+    <!-- New section for today's work -->
+    <div class="topic-card">
+      <h2><i class="fas fa-microscope"></i> Linear Spectral Unmixing Methods for Hyperspectral Data</h2>
+      
+      <p>This week's work focuses on advanced linear unmixing methods for hyperspectral imagery. Linear spectral unmixing is fundamental in hyperspectral image analysis, allowing us to decompose mixed pixels into their constituent pure spectral signatures (endmembers) and their corresponding abundance fractions.</p>
+      
+      <h3><i class="fas fa-flask"></i> Linear Mixing Model</h3>
+      <p>The linear mixing model assumes that each pixel spectrum is a linear combination of pure endmember spectra, weighted by their corresponding abundances:</p>
+      
+      <div class="topic-card" style="background-color: rgba(52, 152, 219, 0.1); margin: 1.5rem 0; padding: 1rem; text-align: center; font-family: monospace; font-size: 1.2rem;">
+        r = Ma + n
+      </div>
+      
+      <p>Where:</p>
+      <ul>
+        <li><strong>r</strong>: observed mixed pixel spectrum</li>
+        <li><strong>M</strong>: matrix of endmember spectra</li>
+        <li><strong>a</strong>: abundance fractions of each endmember</li>
+        <li><strong>n</strong>: noise component</li>
+      </ul>
+      
+      <h3><i class="fas fa-puzzle-piece"></i> Key Concepts in Spectral Unmixing</h3>
+      <ul>
+        <li><strong>Endmembers:</strong> Pure spectral signatures representing distinct materials</li>
+        <li><strong>Abundance:</strong> Proportion of each endmember within a pixel</li>
+        <li><strong>Simplex:</strong> Geometric representation of mixed pixels in spectral space</li>
+        <li><strong>Constraints:</strong>
+          <ul>
+            <li>Non-negativity: Abundances cannot be negative</li>
+            <li>Sum-to-one: Abundances of all endmembers should sum to one for each pixel</li>
+          </ul>
+        </li>
+      </ul>
+      
+      <h3><i class="fas fa-chart-bar"></i> Comparison of Unmixing Methods</h3>
+      
+      <div class="image-grid">
+        <div class="topic-card">
+          <h4><i class="fas fa-chart-pie"></i> Vertex Component Analysis (VCA)</h4>
+          <ul>
+            <li><strong>Key Principle:</strong> Projects data onto directions orthogonal to previously determined endmembers</li>
+            <li><strong>Computational Complexity:</strong> O(p³) - Efficient</li>
+            <li><strong>Advantages:</strong> Works well with low SNR data</li>
+            <li><strong>Speed:</strong> Faster execution time</li>
+            <li><strong>Application:</strong> Suitable for real-time processing</li>
+            <li><strong>Sensitivity:</strong> Less sensitive to initialization</li>
+            <li><strong>Memory:</strong> Lower memory requirements</li>
+          </ul>
+        </div>
+        
+        <div class="topic-card">
+          <h4><i class="fas fa-cube"></i> N-FINDR Algorithm</h4>
+          <ul>
+            <li><strong>Key Principle:</strong> Maximizes the volume of simplex in spectral space</li>
+            <li><strong>Computational Complexity:</strong> Higher due to volume calculations</li>
+            <li><strong>Advantages:</strong> Often produces more accurate endmembers</li>
+            <li><strong>Speed:</strong> Slower but potentially more accurate</li>
+            <li><strong>Application:</strong> Better for research-grade analysis</li>
+            <li><strong>Sensitivity:</strong> Depends on initialization</li>
+            <li><strong>Memory:</strong> Higher memory requirements</li>
+          </ul>
+        </div>
+      </div>
+    
+      <div class="topic-card">
+      <h2><i class="fas fa-satellite-dish"></i> Comparing Hyperspectral Imaging & Sentinel-2 Remote Sensing</h2>
+      
+      <p><strong>This week, I studied the differences between Hyperspectral Imaging (HSI) and Sentinel-2 remote sensing.</strong> HSI offers very high spectral resolution with hundreds of narrow bands, enabling precise material identification, but comes with high data volume, cost, and limited availability. In contrast, Sentinel-2 provides moderate spectral resolution across 13 bands, with free, frequent global coverage suitable for vegetation monitoring, land use classification, and change detection. While HSI is ideal for detailed analysis, Sentinel-2 is more practical for large-scale, long-term environmental monitoring.</p>
+    </div>
     <div class="next-week">
       <h3><i class="fas fa-calendar-alt"></i> Next Week's Plan</h3>
       <ul>
-        <li>Explore advanced methods for hyperspectral image classification</li>
-        <li>Apply machine learning algorithms to Sentinel-2 data</li>
-        <li>Analyze time-series data to detect seasonal changes</li>
-        <li>Investigate specialized vegetation indices for mangrove ecosystems</li>
-      </ul>
-    </div>
+        <li>Implement NFIND-R Algorithm in python</li>
+        <li>Apply the Implemented Algorithm for the different HSI datasets and compare with groundtruths</li>
+        <li>Study about nonlinear unmixing algorithms</li>
+        <li>Get Familiar with the Google Earth Engine and perform change detection</li>
+        
   </div>
 
   <footer>
