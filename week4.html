@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 4 – Hyperspectral Imaging Project</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #3498db;
+      --text-color: #ecf0f1;
+      --earth-green: #27ae60;
+      --earth-brown: #795548;
+      --space-blue: #1a237e;
+      --card-bg: rgba(52, 73, 94, 0.3);
+      --progress-bg: rgba(39, 174, 96, 0.2);
+      --code-bg: rgba(20, 20, 20, 0.8);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #121212;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--text-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.9);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      z-index: 101;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .resource-links {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .resource-links a {
+      display: block;
+      color: var(--accent-color);
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: color 0.3s;
+      font-size: 1.05rem;
+    }
+    
+    .resource-links a:hover {
+      color: var(--text-color);
+    }
+    
+    .resource-links a i {
+      margin-right: 0.5rem;
+    }
+    
+    .image-container {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .caption {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
+    }
+    
+    .next-week {
+      background-color: rgba(26, 35, 126, 0.3);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(52, 73, 94, 0.5);
+      padding: 0.8rem;
+      border-radius: 5px;
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    /* Code styling */
+    .code-block {
+      background-color: var(--code-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e6e6e6;
+      border-left: 4px solid var(--accent-color);
+    }
+    
+    .code-block pre {
+      margin: 0;
+    }
+    
+    .code-comment {
+      color: #6A9955;
+    }
+    
+    .code-keyword {
+      color: #569CD6;
+    }
+    
+    .code-function {
+      color: #DCDCAA;
+    }
+    
+    .code-string {
+      color: #CE9178;
+    }
+    
+    .code-number {
+      color: #B5CEA8;
+    }
+    
+    /* Algorithm steps */
+    .algorithm-steps {
+      background-color: rgba(52, 73, 94, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .algorithm-steps ol {
+      counter-reset: algorithm-counter;
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .algorithm-steps ol li {
+      position: relative;
+      counter-increment: algorithm-counter;
+      padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+      margin-bottom: 0.5rem;
+      background-color: rgba(52, 73, 94, 0.5);
+      border-radius: 5px;
+    }
+    
+    .algorithm-steps ol li::before {
+      content: counter(algorithm-counter);
+      position: absolute;
+      left: 0.8rem;
+      font-weight: bold;
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    /* Two-column layout for results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .result-card {
+      background-color: rgba(52, 73, 94, 0.4);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: transform 0.3s;
+    }
+    
+    .result-card:hover {
+      transform: scale(1.02);
+    }
+    
+    .result-card h5 {
+      color: var(--accent-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>Week 4: N-FINDR Algorithm Implementation</h1>
+    <p>Exploring endmember extraction in hyperspectral imagery using the N-FINDR algorithm</p>
+  </header>
+
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-microscope"></i> Week 4 Progress: N-FINDR Implementation</h3>
+      <p>This week I focused on studying, understanding, and implementing the N-FINDR algorithm for endmember extraction in hyperspectral imagery, with specific application to the Urban_6 dataset.</p>
+      
+      <h4><i class="fas fa-lightbulb"></i> Understanding N-FINDR: The Concept</h4>
+      <p>The N-FINDR algorithm is a geometric approach to endmember extraction that works on the principle of finding the maximum volume simplex in the data cloud. The key concepts behind the algorithm are:</p>
+      <ul>
+        <li>Endmembers are pure spectral signatures that represent distinct materials in the scene</li>
+        <li>A simplex is a geometric structure that generalizes a triangle to arbitrary dimensions</li>
+        <li>The volume of a simplex formed by pure endmembers will be larger than any simplex containing mixed pixels</li>
+        <li>By maximizing the simplex volume, we can identify the purest pixels in the dataset</li>
+        <li>The algorithm performs dimensionality reduction through PCA to reduce computational complexity</li>
+      </ul>
+      
+      <div class="algorithm-steps">
+        <h4>N-FINDR Algorithm Steps:</h4>
+        <ol>
+          <li>Reduce dimensionality of the hyperspectral data to <code>p-1</code> using PCA, where <code>p</code> is the number of endmembers to extract</li>
+          <li>Randomly initialize a set of <code>p</code> pixels as initial endmembers</li>
+          <li>Calculate the volume of the simplex formed by these endmembers</li>
+          <li>For each endmember position, iteratively replace it with each pixel in the dataset and recalculate the volume</li>
+          <li>If the new volume is larger, keep the replacement; otherwise, retain the original endmember</li>
+          <li>Repeat until no replacements occur or maximum iterations reached</li>
+          <li>Project endmembers back to the original spectral space</li>
+        </ol>
+      </div>
+      
+      <h4><i class="fas fa-code"></i> N-FINDR Implementation</h4>
+      <p>I implemented the N-FINDR algorithm from scratch using Python, NumPy, and scikit-learn. Here's the full implementation:</p>
+      
+      <div class="code-block">
+        <pre>
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+<span class="code-keyword">from</span> sklearn.decomposition <span class="code-keyword">import</span> PCA
+<span class="code-keyword">import</span> math
+
+<span class="code-comment"># Function to calculate the volume of a simplex</span>
+<span class="code-keyword">def</span> <span class="code-function">volume_simplex</span>(A):
+    <span class="code-keyword">if</span> A.shape[<span class="code-number">1</span>] <= A.shape[<span class="code-number">0</span>]:
+        <span class="code-comment"># Create matrix for volume calculation: differences from first point + row of ones</span>
+        mat = np.vstack((A[:,<span class="code-number">1</span>:] - A[:,:<span class="code-number">1</span>], np.ones((<span class="code-number">1</span>, A.shape[<span class="code-number">1</span>]-<span class="code-number">1</span>))))
+        mat = mat.T  <span class="code-comment"># shape (p-1, p-1)</span>
+        
+        <span class="code-comment"># Calculate volume using determinant</span>
+        <span class="code-keyword">return</span> np.abs(np.linalg.det(mat)) / math.factorial(A.shape[<span class="code-number">1</span>]-<span class="code-number">1</span>)
+    <span class="code-keyword">else</span>:
+        <span class="code-keyword">return</span> <span class="code-number">0</span>
+
+<span class="code-comment"># Main N-FINDR algorithm</span>
+<span class="code-keyword">def</span> <span class="code-function">run_nfindr</span>(X, p, max_iter=<span class="code-number">5</span>):
+    <span class="code-comment"># Reduce dimensionality to (p-1) using PCA</span>
+    pca = PCA(n_components=p-<span class="code-number">1</span>)
+    X_reduced = pca.fit_transform(X.T).T  <span class="code-comment"># (p-1, N)</span>
+    
+    <span class="code-comment"># Initialize with random endmember selection</span>
+    N = X_reduced.shape[<span class="code-number">1</span>]
+    idx = np.random.choice(N, p, replace=<span class="code-keyword">False</span>)
+    E = X_reduced[:, idx]
+    V = volume_simplex(E)
+    
+    <span class="code-comment"># Iterative process to maximize simplex volume</span>
+    <span class="code-keyword">for</span> it <span class="code-keyword">in</span> range(max_iter):
+        <span class="code-keyword">for</span> i <span class="code-keyword">in</span> range(p):
+            <span class="code-keyword">for</span> j <span class="code-keyword">in</span> range(N):
+                <span class="code-comment"># Try replacing endmember i with pixel j</span>
+                E_tmp = E.copy()
+                E_tmp[:, i] = X_reduced[:, j]
+                V_tmp = volume_simplex(E_tmp)
+                
+                <span class="code-comment"># Keep replacement if volume increases</span>
+                <span class="code-keyword">if</span> V_tmp > V:
+                    V = V_tmp
+                    E[:, i] = X_reduced[:, j]
+    
+    <span class="code-comment"># Project endmembers back to original spectral space</span>
+    endmembers_original_space = pca.inverse_transform(E.T).T
+    
+    <span class="code-keyword">return</span> endmembers_original_space</pre>
+      </div>
+      <div class="resource-links">
+  <h4><i class="fas fa-code-branch"></i> GitHub Repository</h4>
+  <p>The complete implementation of the N-FINDR algorithm along with experiment code is available in my GitHub repository:</p>
+  <a href="https://github.com/nichula01/hyperspectral-nfindr" target="_blank">
+    <i class="fab fa-github"></i> github.com/nichula01/hyperspectral-nfindr
+  </a>
+  
+</div>
+      <h4><i class="fas fa-chart-line"></i> Urban_6 Dataset Analysis</h4>
+      <p>I applied the N-FINDR algorithm to the Urban_6 hyperspectral dataset, which contains urban scene imagery with multiple material types.</p>
+      
+      <div class="image-container">
+        <img src="images/urban6rgb.png" alt="Urban_6 RGB Composite" class="contained-image">
+        <p class="caption">RGB composite of the Urban_6 hyperspectral dataset</p>
+      </div>
+      
+      <p>The experiment involved extracting 6 endmembers from the Urban_6 dataset, which corresponds to the main material classes present in the scene:</p>
+      
+        <div class="result-card">
+          <h5>Extracted Endmembers</h5>
+          <div class="image-container">
+            <img src="images/urban6_endspec.png" alt="Extracted Endmembers Spectral Signatures" class="contained-image">
+            <p class="caption">Spectral signatures of the 6 extracted endmembers</p>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <h5>Abundance Maps</h5>
+          <div class="image-container">
+            <img src="images/abundancemap.png" alt="Abundance Maps for Each Endmember" class="contained-image">
+            <p class="caption">Abundance maps showing the distribution of each endmember material</p>
+          </div>
+        </div>
+      
+      
+      <h4><i class="fas fa-flask"></i> Experimental Results</h4>
+      <p>To validate the implementation, I compared the extracted endmembers with ground truth spectral signatures from the Urban_6 dataset. The results show:</p>
+
+      
+      <div class="image-container">
+        <img src="images/Nfindr results.png" alt="Comparison with Ground Truth" class="contained-image">
+        <p class="caption">Comparison between extracted endmembers (solid lines) and ground truth spectra (dashed lines)</p>
+      </div>
+      
+      <h4><i class="fas fa-graduation-cap"></i> Insights & Learnings</h4>
+      <p>Through this implementation and experimentation, I gained several key insights about the N-FINDR algorithm:</p>
+      <ul>
+        <li>The algorithm's performance is sensitive to initial endmember selection</li>
+        <li>Multiple runs with different initializations can help ensure more reliable results</li>
+        <li>Dimensionality reduction is crucial for computational efficiency, but must be done carefully to preserve essential spectral information</li>
+        <li>The volume calculation is the most mathematically intensive part of the algorithm</li>
+        <li>The algorithm is well-suited for scenes with distinct material types, such as urban environments</li>
+      </ul>
+    </div>
+    
+    <div class="topic-card">
+      <h3><i class="fas fa-book-open"></i> Research Papers Reviewed on N-FINDR</h3>
+      <p>To develop a deeper understanding of the N-FINDR algorithm, I reviewed several key research papers:</p>
+      
+      <h4><i class="fas fa-scroll"></i> Key Papers</h4>
+      <ul>
+        <li>Winter, M. E. (1999). "N-FINDR: an algorithm for fast autonomous spectral end-member determination in hyperspectral data" - Original paper introducing the N-FINDR algorithm</li>
+        <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/NFINDR_Original Paper.pdf" width="100%" height="600px"></iframe>
+        </div>
+      </div>
+        <li>Plaza, A., & Chang, C. I. (2005). "An improved N-FINDR algorithm in implementation" - Paper proposing efficiency improvements to the original algorithm</li>
+        <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Improved_Nfindr.pdf" width="100%" height="600px"></iframe>
+        </div>
+        <li>I studied from these papers that the original N-FINDR algorithm identifies pure spectral endmembers by maximizing the volume of a simplex in hyperspectral data, and the improved version enhances efficiency by reducing redundant calculations.</li>
+
+      
+      <div class="pdf-viewer-section">
+        <h4><i class="fas fa-file-pdf"></i> Literature Review Notes</h4>
+        <div class="pdf-container">
+          <iframe src="resources/nfindr_review.pdf" width="100%" height="600px"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-week">
+      <h3><i class="fas fa-calendar-alt"></i> Next Week's Plan</h3>
+      <ul>
+        <li>Implement additional endmember extraction algorithms (VCA, SISAL) for comparison</li>
+        <li>Explore abundance estimation techniques using constrained least squares</li>
+        <li>Apply unmixing pipeline to different hyperspectral datasets</li>
+        <li>Begin work on a graphical user interface for hyperspectral analysis</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p class="footer-text">
+      © 2025 Hyperspectral Imaging Project. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    document.querySelector('.dropbtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const dropdownContent = this.nextElementSibling;
+      dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.querySelector('.dropdown');
+      if (!dropdown.contains(e.target)) {
+        document.querySelector('.dropdown-content').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
