@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 5 – Hyperspectral Imaging Project</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #3498db;
+      --text-color: #ecf0f1;
+      --earth-green: #27ae60;
+      --earth-brown: #795548;
+      --space-blue: #1a237e;
+      --card-bg: rgba(52, 73, 94, 0.3);
+      --progress-bg: rgba(39, 174, 96, 0.2);
+      --code-bg: rgba(20, 20, 20, 0.8);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #121212;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--text-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.9);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      z-index: 101;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .resource-links {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .resource-links a {
+      display: block;
+      color: var(--accent-color);
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: color 0.3s;
+      font-size: 1.05rem;
+    }
+    
+    .resource-links a:hover {
+      color: var(--text-color);
+    }
+    
+    .resource-links a i {
+      margin-right: 0.5rem;
+    }
+    
+    .image-container {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .caption {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
+    }
+    
+    .next-week {
+      background-color: rgba(26, 35, 126, 0.3);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(52, 73, 94, 0.5);
+      padding: 0.8rem;
+      border-radius: 5px;
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    /* Code styling */
+    .code-block {
+      background-color: var(--code-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e6e6e6;
+      border-left: 4px solid var(--accent-color);
+    }
+    
+    .code-block pre {
+      margin: 0;
+    }
+    
+    .code-comment {
+      color: #6A9955;
+    }
+    
+    .code-keyword {
+      color: #569CD6;
+    }
+    
+    .code-function {
+      color: #DCDCAA;
+    }
+    
+    .code-string {
+      color: #CE9178;
+    }
+    
+    .code-number {
+      color: #B5CEA8;
+    }
+    
+    /* Algorithm steps */
+    .algorithm-steps {
+      background-color: rgba(52, 73, 94, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .algorithm-steps ol {
+      counter-reset: algorithm-counter;
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .algorithm-steps ol li {
+      position: relative;
+      counter-increment: algorithm-counter;
+      padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+      margin-bottom: 0.5rem;
+      background-color: rgba(52, 73, 94, 0.5);
+      border-radius: 5px;
+    }
+    
+    .algorithm-steps ol li::before {
+      content: counter(algorithm-counter);
+      position: absolute;
+      left: 0.8rem;
+      font-weight: bold;
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    /* Two-column layout for results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .result-card {
+      background-color: rgba(52, 73, 94, 0.4);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: transform 0.3s;
+    }
+    
+    .result-card:hover {
+      transform: scale(1.02);
+    }
+    
+    .result-card h5 {
+      color: var(--accent-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>Week 5: Non-Linear Hyperspectral Unmixing</h1>
+    <p>Exploring advanced non-linear techniques for accurate spectral unmixing in hyperspectral imagery</p>
+  </header>
+
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-brain"></i> Week 5 Progress: Non-Linear Unmixing Methods</h3>
+      <p>This week focused on understanding non-linear spectral mixing models used in hyperspectral unmixing.</p>
+      
+      <h4><i class="fas fa-project-diagram"></i> Overview of Non-Linear Mixing</h4>
+      <ul>
+        <li>Unlike linear models, non-linear models capture multiple scattering and intimate mixing effects.</li>
+        <li>Essential for complex scenes like vegetation canopies, urban areas, and mineral mixtures.</li>
+      </ul>
+      
+      <h4><i class="fas fa-cogs"></i> Techniques Explored</h4>
+      <ul>
+        <li><strong>Kernel-Based Models:</strong> Used kernel trick to model non-linear mixing in a high-dimensional space.</li>
+        <li><strong>Bilinear Models:</strong> Considered interactions between endmembers (e.g., GBM, PPNM).</li>
+        <li><strong>Neural Network Models:</strong> Introduced MLP-based unmixing frameworks for learning complex mappings.</li>
+      </ul>
+      
+      <h4><i class="fas fa-lightbulb"></i> Key Learnings</h4>
+      <ul>
+        <li>Non-linear models improve accuracy in real-world complex environments.</li>
+        <li>They often require more data and computational resources.</li>
+        <li>Trade-off exists between model complexity and interpretability.</li>
+      </ul>
+      
+      
+    </div>
+    <div class="topic-card">
+      <h3><i class="fas fa-book-open"></i> Research Papers Reviewed on Non linear unmixing</h3>
+      <h4><i class="fas fa-scroll"></i> Key Papers</h4>
+      <ul>
+        <li>Bioucas-Dias, J. M., & Plaza, A. (2012) - "Hyperspectral Unmixing: Geometrical, Statistical, and Sparse Regression-Based Approaches</li>
+        <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Nnlinear unmixing.pdf" width="100%" height="600px"></iframe>
+        </div>
+      </div>
+
+    <div class="topic-card">
+      <h3><i class="fas fa-city"></i> Project Work: Slum Detection in Colombo</h3>
+      <p>Parallel to hyperspectral unmixing studies, working on a practical application of remote sensing for urban analysis.</p>
+      
+      <h4><i class="fas fa-target"></i> Project Objective</h4>
+      <p>Developing a deep learning model to detect and classify slum vs non-slum regions in Colombo using both RGB and Sentinel-2 multispectral imagery. The goal is to compare the effectiveness of RGB-only versus multispectral approaches for urban slum identification.</p>
+      
+      <h4><i class="fas fa-database"></i> Data Sources & Methodology</h4>
+      <ul>
+        <li><strong>Training Data:</strong> Mumbai and Caracas labeled datasets for initial model development</li>
+        <li><strong>Target Area:</strong> Colombo city - manual annotation using high-resolution satellite imagery</li>
+        <li><strong>Ground Truth Creation:</strong> Using Google Street View for validation as suggested by supervisor</li>
+        <li><strong>Multispectral Data:</strong> Sentinel-2 L2A products for enhanced spectral classification</li>
+        <li><strong>Approach:</strong> 256x256 tile-based training and comparison of RGB vs MSI performance</li>
+      </ul>
+      
+      <h4><i class="fas fa-chart-line"></i> Expected Outcomes</h4>
+      <ul>
+        <li>Quantitative comparison between RGB and multispectral approaches</li>
+        <li>Model generalization assessment across different urban environments</li>
+        <li>Ground truth validation using Street View imagery</li>
+        <li>Practical tool for urban planning and slum mapping in Colombo</li>
+      </ul>
+      
+      <h4><i class="fas fa-tasks"></i> Current Progress</h4>
+      <ul>
+        <li>Literature review on slum detection methodologies completed</li>
+        <li>Initial dataset acquisition and preparation in progress</li>
+        <li>Colombo area selection and preliminary annotation started</li>
+        <li>Next: Ground truth creation using Google Street View validation</li>
+      </ul>
+    </div>
+
+    <div class="next-week">
+      <h3><i class="fas fa-forward"></i> Next Week's Plan</h3>
+      <ul>
+        <li>CContinue Colombo slum annotation and Street View ground truth collection</li>
+        <li>Identifying the differences between Unsupervised and supervised learning in change detection</li>
+        <li>Train the model for the different datasets and incraesing the accuracy for RGB image</li>
+        
+      </ul>
+    </div>  
+    
+      
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p class="footer-text">
+      © 2025 Hyperspectral Imaging Project. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    document.querySelector('.dropbtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const dropdownContent = this.nextElementSibling;
+      dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.querySelector('.dropdown');
+      if (!dropdown.contains(e.target)) {
+        document.querySelector('.dropdown-content').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
