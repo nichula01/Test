@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 6 – Hyperspectral Imaging Project</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #3498db;
+      --text-color: #ecf0f1;
+      --earth-green: #27ae60;
+      --earth-brown: #795548;
+      --space-blue: #1a237e;
+      --card-bg: rgba(52, 73, 94, 0.3);
+      --progress-bg: rgba(39, 174, 96, 0.2);
+      --code-bg: rgba(20, 20, 20, 0.8);
+      --highlight-orange: #e67e22;
+      --warning-red: #e74c3c;
+      --colombo-blue: #1e3a8a;
+      --validation-green: #059669;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #121212;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--text-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.9);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      z-index: 101;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .resource-links {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .resource-links a {
+      display: block;
+      color: var(--accent-color);
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: color 0.3s;
+      font-size: 1.05rem;
+    }
+    
+    .resource-links a:hover {
+      color: var(--text-color);
+    }
+    
+    .resource-links a i {
+      margin-right: 0.5rem;
+    }
+    
+    .image-container {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .caption {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
+    }
+    
+    /* Image gallery styles */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    
+    .image-card {
+      background-color: rgba(30, 58, 138, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid rgba(30, 58, 138, 0.3);
+    }
+    
+    .image-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    
+    .image-card-content {
+      padding: 1.5rem;
+    }
+    
+    .image-card h5 {
+      color: var(--accent-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .image-card h5 i {
+      color: var(--validation-green);
+    }
+    
+    .image-card p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Colombo work card styling */
+    .colombo-work {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(52, 73, 94, 0.4));
+      border-left: 4px solid var(--colombo-blue);
+    }
+    
+    .validation-badge {
+      display: inline-block;
+      background-color: var(--validation-green);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-left: 0.5rem;
+    }
+    
+    .work-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .stat-card {
+      background-color: rgba(5, 150, 105, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid rgba(5, 150, 105, 0.3);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--validation-green);
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 0.5rem;
+    }
+    
+    .next-week {
+      background-color: rgba(26, 35, 126, 0.3);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(52, 73, 94, 0.5);
+      padding: 0.8rem;
+      border-radius: 5px;
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    /* Code styling */
+    .code-block {
+      background-color: var(--code-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e6e6e6;
+      border-left: 4px solid var(--accent-color);
+    }
+    
+    .code-block pre {
+      margin: 0;
+    }
+    
+    /* GitHub repository styling */
+    .github-card {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(52, 73, 94, 0.4));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .github-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+    
+    .github-header i {
+      font-size: 1.5rem;
+      color: #f0f6fc;
+    }
+    
+    .github-header h5 {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    
+    .github-link {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    
+    .github-link:hover {
+      color: var(--text-color);
+    }
+    
+    /* Model architecture styling */
+    .architecture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .arch-card {
+      background-color: rgba(39, 174, 96, 0.1);
+      border-left: 4px solid var(--earth-green);
+      border-radius: 8px;
+      padding: 1.2rem;
+    }
+    
+    .arch-card h5 {
+      color: var(--earth-green);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+    
+    /* Dataset comparison table */
+    .comparison-table {
+      background-color: rgba(52, 73, 94, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+    
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+      color: var(--text-color);
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .comparison-table th {
+      background-color: rgba(52, 152, 219, 0.2);
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+    
+    .comparison-table td:first-child {
+      font-weight: bold;
+      color: var(--earth-green);
+    }
+    
+    /* Enhancement badge */
+    .enhancement-badge {
+      display: inline-block;
+      background-color: var(--highlight-orange);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-left: 0.5rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+      
+      .architecture-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .image-gallery {
+        grid-template-columns: 1fr;
+      }
+      
+      .work-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  <header class="page-header">
+    <h1>Week 6: STnet Model Implementation and groundtruth marking</h1>
+    <p>Implementing  uncertainty-aware deep learning for slum detection using transfer learning </p>
+  </header>
+
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-neural-network"></i> Week 6 Progress: STnet Model Integration</h3>
+      <p>This week focused on implementing the STnet  model for uncertainty-aware slum detection, building upon the research by Stark et al. for advanced urban morphology classification.</p>
+      
+      <div class="github-card">
+        <div class="github-header">
+          <i class="fab fa-github"></i>
+          <h5>Repository</h5>
+        </div>
+        <p><strong>Source:</strong> <a href="https://github.com/stark-t/UncertaintySlumDetection" class="github-link" target="_blank">stark-t/UncertaintySlumDetection</a></p>
+        <p>Official implementation of "Quantifying Uncertainty in Slum Detection: Advancing Transfer-Learning with Limited Data in Noisy Urban Environments"</p>
+      </div>
+      
+      
+      
+      <h4><i class="fas fa-database"></i> Dataset Strategy & Implementation</h4>
+      <ul>
+        <li><strong>Primary Training:</strong> Mumbai dataset (3m resolution RGB resampled from Sentinel-2)</li>
+        <li><strong>Transfer Learning Source:</strong> Caracas dataset for initial model pre-training</li>
+        <li><strong>Target Application:</strong> Colombo urban areas with manual annotation pipeline</li>
+        <li><strong>Ground Truth Validation:</strong> Google Street View integration for accuracy assessment</li>
+        <li><strong>Data Structure Requirements:</strong> RGB imagery, urban-background masks, and slum reference masks</li>
+      </ul>
+      
+     
+
+    <div class="topic-card">
+      <h3><i class="fas fa-file-alt"></i> Research Paper: Uncertainty in Slum Detection</h3>
+      
+      <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+      <ul>
+        <li><strong>Title:</strong> "Quantifying Uncertainty in Slum Detection: Advancing Transfer-Learning with Limited Data in Noisy Urban Environments"</li>
+        <li><strong>Authors:</strong> T. Stark, M. Wurm, X. X. Zhu, and H. Taubenbock</li>
+        <li><strong>Journal:</strong> IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (2024)</li>
+        <li><strong>DOI:</strong> 10.1109/JSTARS.2024.3359636</li>
+      </ul>
+      
+      <h4><i class="fas fa-key"></i> Key Contributions</h4>
+      <ul>
+        <li>Novel uncertainty quantification approach for slum detection using Monte Carlo Dropout</li>
+        <li>Transfer learning methodology for limited data scenarios in urban environments</li>
+        <li>STnet architecture optimized for handling noisy and imbalanced datasets</li>
+        <li>Comprehensive evaluation on PlanetScope and Sentinel-2 imagery across multiple cities</li>
+      </ul>
+      
+      <h4><i class="fas fa-lightbulb"></i> Methodology Insights</h4>
+      <ul>
+        <li><strong>Uncertainty Estimation:</strong> Monte Carlo Dropout for probabilistic predictions</li>
+        <li><strong>Transfer Learning:</strong> Pre-training → Fine-tuning → Target application workflow</li>
+        <li><strong>Data Efficiency:</strong> Minimal sample requirements through effective transfer learning</li>
+        <li><strong>Noise Handling:</strong> Robust architecture design for dealing with annotation inconsistencies</li>
+      </ul>
+      <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Quantifying_Uncertainty_in_Slum_Detection_Advancing_Transfer_Learning_With_Limited_Data_in_Noisy_Urban_Environments.pdf" width="100%" height="600px"></iframe>
+        </div>
+      
+    </div>
+
+    <div class="topic-card">
+      <h3><i class="fas fa-map-marked-alt"></i> Colombo Application Strategy</h3>
+      
+      <h4><i class="fas fa-target"></i> Project Objectives</h4>
+      <ul>
+        <li>Adapt STnet model for Colombo urban morphology detection</li>
+        <li>Compare RGB vs 13-band multispectral performance quantitatively</li>
+        <li>Establish robust ground truth through Street View validation</li>
+        <li>Develop uncertainty-aware slum mapping for urban planning applications</li>
+      </ul>
+      
+      <h4><i class="fas fa-route"></i> Implementation Approach</h4>
+      <ul>
+        <li><strong>Phase 1:</strong> Mumbai dataset training and model validation</li>
+        <li><strong>Phase 2:</strong> Colombo area selection and manual annotation</li>
+        <li><strong>Phase 3:</strong> Transfer learning fine-tuning on Colombo data</li>
+        <li><strong>Phase 4:</strong> 13-band Sentinel-2 model enhancement</li>
+        <li><strong>Phase 5:</strong> Comparative analysis and uncertainty quantification</li>
+      </ul>
+      
+      <h4><i class="fas fa-chart-bar"></i> Expected Outcomes</h4>
+      <ul>
+        <li>Quantitative comparison between RGB and multispectral approaches</li>
+        <li>Uncertainty maps highlighting prediction confidence levels</li>
+        <li>Transfer learning effectiveness assessment across different urban contexts</li>
+        <li>Practical slum detection tool for Colombo urban planning</li>
+      </ul>
+    </div>
+
+     
+  <div class="content-container">
+    <div class="topic-card colombo-work">
+      <h3><i class="fas fa-map-marked-alt"></i> Colombo Slum Area Analysis & Data Collection</h3>
+      <p>This week focused on conducting a comprehensive study of slum areas in Colombo, Sri Lanka, with systematic data labeling and validation using Google Earth Engine platform and Google Street View verification.</p>
+      
+      <div class="work-stats">
+        <div class="stat-card">
+          <span class="stat-number">50+</span>
+          <div class="stat-label">Slum Areas Identified</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">100+</span>
+          <div class="stat-label">Non-Slum Areas Labeled</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">100%</span>
+          <div class="stat-label">Street View Validated</div>
+        </div>
+        
+      </div>
+      
+      <h4><i class="fas fa-satellite"></i> Google Earth Engine Data Labeling <span class="validation-badge">VALIDATED</span></h4>
+      <p>Our team conducted systematic labeling of urban areas in Colombo using Google Earth Engine's high-resolution satellite imagery. The process involved identifying characteristic features of slum settlements and contrasting them with formal urban developments.</p>
+      
+      <ul>
+        <li><strong>Slum Area Identification:</strong> High-density informal settlements with irregular building patterns, narrow pathways, and mixed construction materials</li>
+        <li><strong>Non-Slum Area Classification:</strong> Formal urban areas with planned layouts, wider roads, and standardized construction</li>
+        <li><strong>Polygon Digitization:</strong> Precise boundary delineation using Google Earth Engine's drawing tools</li>
+        <li><strong>Quality Control:</strong> Cross-validation between team members to ensure consistency in labeling criteria</li>
+      </ul>
+      
+      <h4><i class="fas fa-street-view"></i> Google Street View Validation Process</h4>
+      <p>To ensure accuracy of our satellite-based classifications, we systematically validated identified areas using Google Street View imagery, providing ground-level perspective of urban morphology.</p>
+      
+      <ul>
+        <li><strong>Ground Truth Verification:</strong> Street-level imagery to confirm satellite-based classifications</li>
+     
+    </div>
+
+    <div class="topic-card">
+      <h3><i class="fas fa-images"></i> Labeled Data Visualization</h3>
+      <p>Visual representation of our data collection efforts showing both slum and non-slum polygon areas identified and validated during our comprehensive Colombo urban study.</p>
+      
+      <div class="image-gallery">
+        <div class="image-card">
+          <img src="images/slumpolygens.png" alt="Slum Area Polygons in Google Earth Engine" />
+          <div class="image-card-content">
+            <h5><i class="fas fa-home"></i> Slum Area Polygons</h5>
+            <p>High-density informal settlements identified in Colombo using Google Earth Engine. These areas show characteristic irregular building patterns, narrow access roads, and mixed construction materials typical of urban slum environments.</p>
+          </div>
+        </div>
+        
+        <div class="image-card">
+          <img src="images/nonslum polygens.png" alt="Non-Slum Area Polygons in Google Earth Engine" />
+          <div class="image-card-content">
+            <h5><i class="fas fa-building"></i> Non-Slum Area Polygons</h5>
+            <p>Formal urban residential areas in Colombo showing planned development patterns, standardized construction, wider road networks, and organized urban infrastructure typical of formal housing developments.</p>
+          </div>
+        </div>
+      </div>
+      
+      <h4><i class="fas fa-eye"></i> Street View Validation</h4>
+      <p>Ground-level verification of our satellite-based classifications using Google Street View to ensure accuracy and provide contextual understanding of urban morphology differences.</p>
+      
+      <div class="image-gallery">
+        <div class="image-card">
+          <img src="images/streetview.png" alt="Street View of Slum Area" />
+          <div class="image-card-content">
+            <h5><i class="fas fa-road"></i> Slum Area - Street View</h5>
+            <p>Ground-level view showing narrow pathways, high building density, mixed construction materials, and informal settlement characteristics that confirm our satellite-based slum area classifications.</p>
+          </div>
+        </div>
+        
+        <div class="image-card">
+          <img src="images/nonslumstreetview.png" alt="Street View of Non-Slum Area" />
+          <div class="image-card-content">
+            <h5><i class="fas fa-road"></i> Non-Slum Area - Street View</h5>
+            <p>Formal residential area with planned layout, standardized construction, proper road infrastructure, and organized urban development patterns validating our non-slum classifications.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      
+    <div class="next-week">
+      <h3><i class="fas fa-forward"></i> Next Week's Plan</h3>
+      <ul>
+        <li>Complete Mumbai dataset preprocessing and initial STnet training</li>
+        <li>Begin Colombo area selection and high-resolution imagery acquisition</li>
+        <li>Study about unet architecture</li>
+        <li>Implement basic unet model</li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p class="footer-text">
+      © 2025 Hyperspectral Imaging Project. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    document.querySelector('.dropbtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const dropdownContent = this.nextElementSibling;
+      dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.querySelector('.dropdown');
+      if (!dropdown.contains(e.target)) {
+        document.querySelector('.dropdown-content').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
