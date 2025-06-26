@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 8 – Hyperspectral Imaging Project</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #ffffff;
+      --secondary-color: #f8f9fa;
+      --accent-color: #0066cc;
+      --text-color: #2c3e50;
+      --earth-green: #28a745;
+      --earth-brown: #8d6e63;
+      --space-blue: #3f51b5;
+      --card-bg: rgba(248, 249, 250, 0.8);
+      --progress-bg: rgba(40, 167, 69, 0.15);
+      --code-bg: rgba(248, 249, 250, 0.9);
+      --highlight-orange: #fd7e14;
+      --warning-red: #dc3545;
+      --colombo-blue: #1e40af;
+      --validation-green: #198754;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 20px var(--shadow-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px var(--shadow-medium);
+      z-index: 101;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 0 2px 4px var(--shadow-light);
+      font-weight: 700;
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 8px;
+      padding: 12px 24px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid rgba(40, 167, 69, 0.2);
+      color: var(--validation-green);
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px var(--shadow-light);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px var(--shadow-medium);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .resource-links {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .resource-links a {
+      display: block;
+      color: var(--accent-color);
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: color 0.3s;
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+    
+    .resource-links a:hover {
+      color: var(--text-color);
+    }
+    
+    .resource-links a i {
+      margin-right: 0.5rem;
+    }
+    
+    .image-container {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--shadow-light);
+      border: 1px solid var(--border-color);
+    }
+    
+    .caption {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(44, 62, 80, 0.7);
+      font-style: italic;
+    }
+    
+    /* Image gallery styles */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    
+    .image-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 16px var(--shadow-light);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .image-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--shadow-medium);
+    }
+    
+    .image-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    
+    .image-card-content {
+      padding: 1.5rem;
+    }
+    
+    .image-card h5 {
+      color: var(--accent-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .image-card h5 i {
+      color: var(--validation-green);
+    }
+    
+    .image-card p {
+      color: var(--text-color);
+      opacity: 0.85;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Mumbai work card styling */
+    .mumbai-work {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(30, 64, 175, 0.05));
+      border-left: 4px solid var(--colombo-blue);
+    }
+    
+    .validation-badge {
+      display: inline-block;
+      background-color: var(--validation-green);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    
+    .work-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .stat-card {
+      background-color: rgba(25, 135, 84, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid rgba(25, 135, 84, 0.15);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--validation-green);
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .next-week {
+      background-color: rgba(63, 81, 181, 0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 1px solid rgba(63, 81, 181, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
+      padding-left: 2rem;
+      border: 1px solid var(--border-color);
+      transition: background-color 0.3s;
+    }
+    
+    .next-week ul li:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    /* Code styling */
+    .code-block {
+      background-color: var(--code-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #2c3e50;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-color);
+    }
+    
+    .code-block pre {
+      margin: 0;
+    }
+    
+    /* Results analysis styling */
+    .results-analysis {
+      background: linear-gradient(135deg, rgba(40, 167, 69, 0.08), rgba(255, 255, 255, 0.9));
+      border-left: 4px solid var(--earth-green);
+    }
+    
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .performance-card {
+      background-color: rgba(40, 167, 69, 0.05);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      border: 1px solid rgba(40, 167, 69, 0.15);
+    }
+    
+    .performance-card h5 {
+      color: var(--earth-green);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .performance-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--validation-green);
+      display: block;
+    }
+    
+    .performance-description {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      margin-top: 0.5rem;
+    }
+    
+    /* Analysis highlight */
+    .analysis-highlight {
+      background-color: rgba(253, 126, 20, 0.1);
+      border-left: 4px solid var(--highlight-orange);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      border: 1px solid rgba(253, 126, 20, 0.2);
+    }
+    
+    .analysis-highlight p {
+      margin: 0;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -4px 20px var(--shadow-light);
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.6;
+    }
+    
+.github-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 20, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.github-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.github-header i {
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.github-header h5 {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.github-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.github-link:hover {
+  color: #ffffff;
+}
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+      
+      .performance-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .image-gallery {
+        grid-template-columns: 1fr;
+      }
+      
+      .work-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }    
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  
+  <header class="page-header">
+    <h1>Week 8: U-Net Model Implementation for Slum Detection</h1>
+    <p>Deep learning approach using U-Net architecture for semantic segmentation of slum areas in Mumbai dataset</p>
+  </header>
+
+  
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-network-wired"></i> Week 8 Progress: U-Net Architecture Implementation</h3>
+      <p>This week focused on implementing the U-Net model for slum detection using the Mumbai dataset. U-Net is a convolutional neural network architecture specifically designed for semantic segmentation tasks, making it ideal for pixel-level classification of urban areas.</p>
+      
+      <h4><i class="fas fa-cogs"></i> U-Net Architecture Overview</h4>
+      <ul>
+        <li><strong>Encoder-Decoder Structure:</strong> Symmetrical architecture with contracting and expansive paths</li>
+        <li><strong>Skip Connections:</strong> Feature concatenation between encoder and decoder for better localization</li>
+        <li><strong>Multi-scale Features:</strong> Captures both local and global context for improved segmentation</li>
+        <li><strong>Pixel-wise Classification:</strong> Outputs segmentation masks for slum, urban, and background classes</li>
+      </ul>
+      
+      <h4><i class="fas fa-database"></i> Mumbai Dataset Implementation</h4>
+      <ul>
+        <li><strong>Input Data:</strong> RGB satellite imagery at 3m spatial resolution</li>
+        <li><strong>Ground Truth:</strong> Manually annotated masks for slum areas</li>
+        <li><strong>Data Preprocessing:</strong> Normalization and augmentation techniques applied</li>
+        <li><strong>Training Strategy:</strong> Cross-entropy loss with class balancing for imbalanced dataset</li>
+      </ul>
+    </div>
+   <div class="topic-card">
+  <h3><i class="fas fa-file-alt"></i> Research Paper: U-Net for Biomedical Segmentation</h3>
+  
+  <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+  <ul>
+    <li><strong>Title:</strong> "U-Net: Convolutional Networks for Biomedical Image Segmentation"</li>
+    <li><strong>Authors:</strong> Olaf Ronneberger, Philipp Fischer, Thomas Brox</li>
+    <li><strong>Conference:</strong> International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), 2015</li>
+    <li><strong>DOI:</strong> 10.1007/978-3-319-24574-4_28</li>
+  </ul>
+  
+  <h4><i class="fas fa-key"></i> Key Contributions</h4>
+  <ul>
+    <li>Introduced U-Net architecture for pixel-wise image segmentation</li>
+    <li>Designed specifically for biomedical tasks with limited annotated data</li>
+    <li>Uses extensive data augmentation to achieve strong performance</li>
+    <li>Symmetric encoder-decoder structure with skip connections</li>
+  </ul>
+
+  <div class="pdf-viewer-section">
+    <div class="pdf-container">
+      <iframe src="resources/unet_paper.pdf" width="100%" height="600px"></iframe>
+    </div>
+  </div>
+</div>
+    <div class="github-card">
+        <div class="github-header">
+          <i class="fab fa-github"></i>
+          <h5>Repository</h5>
+        </div>
+        <p><strong>Source:</strong> <a href="https://github.com/nichula01/Unet_model" class="github-link" target="_blank">nichula01
+Unet_model</a></p>
+        <p>Implemented model for slum detection</p>
+        <p>This is the complete project folder on unet implementation</p>
+      </div>
+
+
+    <div class="topic-card mumbai-work">
+      <h3><i class="fas fa-city"></i> Mumbai Dataset Training Results <span class="validation-badge">COMPLETED</span></h3>
+      <p>Comprehensive evaluation of U-Net model performance on Mumbai slum detection dataset with detailed analysis of training metrics and classification results.</p>
+      
+      <div class="work-stats">
+        <div class="stat-card">
+          <span class="stat-number">69%</span>
+          <div class="stat-label">Overall Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">50</span>
+          <div class="stat-label">Training Epochs</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">3</span>
+          <div class="stat-label">Classes</div>
+        </div>
+       
+      </div>
+      
+      <h4><i class="fas fa-chart-line"></i> Training Performance Analysis</h4>
+      <p>The model training showed steady convergence with both training and validation loss decreasing over epochs. The Mean IoU (Intersection over Union) improved consistently, indicating better segmentation quality.</p>
+    </div>
+
+ <div class="topic-card">
+  <h3><i class="fas fa-images"></i> Training Results Visualization</h3>
+  <p>Visual analysis of model training progress and performance metrics showing loss curves, IoU trends, and confusion matrix results.</p>
+  
+  <div class="image-sequence">
+    <div class="image-card">
+      <img src="images/mumbai_training_curves.png" alt="Training History Plots" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-chart-area"></i> Training History</h5>
+        <p>Loss and Mean IoU curves over 50 training epochs. Shows steady convergence with training loss decreasing from ~0.85 to ~0.35, while validation IoU reached approximately 0.75, indicating good model generalization.</p>
+      </div>
+    </div>
+    
+    <div class="image-card">
+      <img src="images/mumbai_confusion_matrix.png" alt="Confusion Matrix" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-table"></i> Confusion Matrix</h5>
+        <p>Detailed classification results showing model performance across all three classes. Background class shows highest accuracy, while slum detection achieved moderate performance with some confusion between urban and slum classes.</p>
+      </div>
+    </div>
+    
+    <div class="image-card">
+      <img src="images/table.png" alt="Classification Report" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-chart-bar"></i> Classification Report</h5>
+        <p>Classification report showing precision, recall, and F1-scores for each class with overall accuracy of 69%</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <div class="topic-card results-analysis">
+      <h3><i class="fas fa-analytics"></i> Results Analysis & Performance Evaluation</h3>
+      <p>Comprehensive analysis of U-Net model performance on Mumbai slum detection task with detailed interpretation of metrics and identified challenges.</p>
+      
+      <div class="performance-grid">
+        <div class="performance-card">
+          <h5>Background Class</h5>
+          <span class="performance-value">91%</span>
+          <div class="performance-description">Precision Score</div>
+        </div>
+        
+        <div class="performance-card">
+          <h5>Urban Class</h5>
+          <span class="performance-value">67%</span>
+          <div class="performance-description">Precision Score</div>
+        </div>
+        
+        <div class="performance-card">
+          <h5>Slum Class</h5>
+          <span class="performance-value">23%</span>
+          <div class="performance-description">Precision Score</div>
+        </div>
+        
+        <div class="performance-card">
+          <h5>Overall IoU</h5>
+          <span class="performance-value">0.68</span>
+          <div class="performance-description">Mean IoU Score</div>
+        </div>
+      </div>
+      
+      <h4><i class="fas fa-magnifying-glass"></i> Key Findings</h4>
+      <ul>
+        <li><strong>Class Imbalance Impact:</strong> Background class dominates with 2.1M pixels vs 763K slum pixels</li>
+        <li><strong>Slum Detection Challenges:</strong> Low precision (23%) for slum class indicates high false positive rate</li>
+        <li><strong>Urban-Slum Confusion:</strong> Significant misclassification between urban and slum areas</li>
+        <li><strong>Model Bias:</strong> Strong bias toward background and urban classes due to dataset distribution</li>
+      </ul>
+      
+      <div class="analysis-highlight">
+        <p><strong>Critical Observation:</strong> The model shows excellent performance for background detection but struggles with slum identification, likely due to the inherent similarity between dense urban areas and slum settlements in satellite imagery.</p>
+      </div>
+      
+      <h4><i class="fas fa-exclamation-triangle"></i> Identified Challenges</h4>
+      <ul>
+        <li><strong>Spectral Similarity:</strong> RGB bands may not provide sufficient discriminative features</li>
+        <li><strong>Spatial Resolution:</strong> 3m resolution might be insufficient for detailed slum boundary detection</li>
+        <li><strong>Data Quality:</strong> Annotation inconsistencies affecting model learning</li>
+        <li><strong>Feature Complexity:</strong> Need for more sophisticated feature extraction methods</li>
+      </ul>
+    </div>
+
+    <div class="topic-card">
+      <h3><i class="fas fa-lightbulb"></i> Future Improvements & Recommendations</h3>
+      
+      <h4><i class="fas fa-arrow-up"></i> Model Enhancement Strategies</h4>
+      <ul>
+        <li><strong>Multi-spectral Integration:</strong> Incorporate additional Sentinel-2 bands for better feature discrimination</li>
+        <li><strong>Data Augmentation:</strong> Implement advanced augmentation techniques to balance class distribution</li>
+        <li><strong>Loss Function Optimization:</strong> Apply focal loss or weighted cross-entropy for better class balance</li>
+        <li><strong>Ensemble Methods:</strong> Combine multiple models for improved robustness</li>
+      </ul>
+      
+      <h4><i class="fas fa-tools"></i> Technical Optimizations</h4>
+      <ul>
+        <li><strong>Transfer Learning:</strong> Pre-train on larger urban datasets before fine-tuning</li>
+        <li><strong>Attention Mechanisms:</strong> Integrate attention layers to focus on discriminative features</li>
+        <li><strong>Post-processing:</strong> Apply morphological operations to refine segmentation results</li>
+        <li><strong>Uncertainty Quantification:</strong> Implement Monte Carlo dropout for confidence estimation</li>
+      </ul>
+    </div>
+      
+    <div class="next-week">
+      <h3><i class="fas fa-forward"></i> Next Week's Plan</h3>
+      <ul>
+        <li>How to implement multi-spectral U-Net using all 13 Sentinel-2 bands</li>
+        <li>Explore  advanced data augmentation techniques for class balancing</li>
+        <li>Explore different loss functions (Focal Loss, Dice Loss)</li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p class="footer-text">
+      © 2025 Hyperspectral Imaging Project. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    document.querySelector('.dropbtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const dropdownContent = this.nextElementSibling;
+      dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.querySelector('.dropdown');
+      if (!dropdown.contains(e.target)) {
+        document.querySelector('.dropdown-content').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
