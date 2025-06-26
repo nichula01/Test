@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 7 – STNet Model Implementation for Slum Detection</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #ffffff;
+      --secondary-color: #f8f9fa;
+      --accent-color: #0066cc;
+      --text-color: #2c3e50;
+      --earth-green: #28a745;
+      --earth-brown: #8d6e63;
+      --space-blue: #3f51b5;
+      --card-bg: rgba(248, 249, 250, 0.8);
+      --progress-bg: rgba(40, 167, 69, 0.15);
+      --code-bg: rgba(248, 249, 250, 0.9);
+      --highlight-orange: #fd7e14;
+      --warning-red: #dc3545;
+      --colombo-blue: #1e40af;
+      --validation-green: #198754;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 20px var(--shadow-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px var(--shadow-medium);
+      z-index: 101;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 0 2px 4px var(--shadow-light);
+      font-weight: 700;
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 8px;
+      padding: 12px 24px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid rgba(40, 167, 69, 0.2);
+      color: var(--validation-green);
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px var(--shadow-light);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px var(--shadow-medium);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .resource-links {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .resource-links a {
+      display: block;
+      color: var(--accent-color);
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: color 0.3s;
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+    
+    .resource-links a:hover {
+      color: var(--text-color);
+    }
+    
+    .resource-links a i {
+      margin-right: 0.5rem;
+    }
+    
+    .image-container {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    .contained-image {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--shadow-light);
+      border: 1px solid var(--border-color);
+    }
+    
+    .caption {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(44, 62, 80, 0.7);
+      font-style: italic;
+    }
+    
+    /* Image gallery styles */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    
+    .image-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 16px var(--shadow-light);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .image-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--shadow-medium);
+    }
+    
+    .image-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    
+    .image-card-content {
+      padding: 1.5rem;
+    }
+    
+    .image-card h5 {
+      color: var(--accent-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .image-card h5 i {
+      color: var(--validation-green);
+    }
+    
+    .image-card p {
+      color: var(--text-color);
+      opacity: 0.85;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Mumbai work card styling */
+    .mumbai-work {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(30, 64, 175, 0.05));
+      border-left: 4px solid var(--colombo-blue);
+    }
+    
+    .validation-badge {
+      display: inline-block;
+      background-color: var(--validation-green);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    
+    .work-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .stat-card {
+      background-color: rgba(25, 135, 84, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid rgba(25, 135, 84, 0.15);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--validation-green);
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .next-week {
+      background-color: rgba(63, 81, 181, 0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 1px solid rgba(63, 81, 181, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
+      padding-left: 2rem;
+      border: 1px solid var(--border-color);
+      transition: background-color 0.3s;
+    }
+    
+    .next-week ul li:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    /* Code styling */
+    .code-block {
+      background-color: var(--code-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #2c3e50;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-color);
+    }
+    
+    .code-block pre {
+      margin: 0;
+    }
+    
+    /* Results analysis styling */
+    .results-analysis {
+      background: linear-gradient(135deg, rgba(40, 167, 69, 0.08), rgba(255, 255, 255, 0.9));
+      border-left: 4px solid var(--earth-green);
+    }
+    
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .performance-card {
+      background-color: rgba(40, 167, 69, 0.05);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      border: 1px solid rgba(40, 167, 69, 0.15);
+    }
+    
+    .performance-card h5 {
+      color: var(--earth-green);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .performance-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--validation-green);
+      display: block;
+    }
+    
+    .performance-description {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      margin-top: 0.5rem;
+    }
+    
+    /* Analysis highlight */
+    .analysis-highlight {
+      background-color: rgba(253, 126, 20, 0.1);
+      border-left: 4px solid var(--highlight-orange);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      border: 1px solid rgba(253, 126, 20, 0.2);
+    }
+    
+    .analysis-highlight p {
+      margin: 0;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    /* STNet specific styling */
+    .stnet-architecture {
+      background: linear-gradient(135deg, rgba(63, 81, 181, 0.08), rgba(255, 255, 255, 0.95));
+      border-left: 4px solid var(--space-blue);
+    }
+    
+    .architecture-image {
+      max-width: 100%;
+      height: auto;
+      margin: 2rem 0;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--shadow-light);
+      border: 1px solid var(--border-color);
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -4px 20px var(--shadow-light);
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.6;
+    }
+    
+    .github-card {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 20, 0.9));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .github-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .github-header i {
+      font-size: 1.5rem;
+      color: #ffffff;
+    }
+
+    .github-header h5 {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .github-link {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .github-link:hover {
+      color: #ffffff;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+      
+      .performance-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .image-gallery {
+        grid-template-columns: 1fr;
+      }
+      
+      .work-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }    
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  
+  <header class="page-header">
+    <h1>Week 7: STNet Model Implementation for Slum Detection</h1>
+    <p>Implementing STNet architecture for enhanced slum detection with uncertainty quantification</p>
+  </header>
+
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-network-wired"></i> Week 7 Progress: STNet Architecture Implementation</h3>
+      <p>This week focused on implementing the STNet  model for slum detection, specifically designed to handle uncertainty quantification in noisy urban environments. STNet represents an advanced approach to transfer learning with limited data in complex urban settings.</p>
+      
+      <h4><i class="fas fa-cogs"></i> STNet Architecture Overview</h4>
+      <ul>
+        <li><strong>Spatial Feature Extraction:</strong> Convolutional layers for capturing spatial patterns in urban imagery</li>
+        
+        <li><strong>Uncertainty Quantification:</strong> Built-in mechanisms to estimate prediction confidence</li>
+        <li><strong>Transfer Learning Capability:</strong> Designed for effective knowledge transfer between different urban datasets</li>
+      </ul>
+      
+      <h4><i class="fas fa-database"></i> Dataset Integration</h4>
+      <ul>
+        <li><strong>Multi-source Data:</strong> Incorporates satellite imagery with varying resolutions</li>
+        <li><strong>Noise Handling:</strong> Robust to annotation inconsistencies and label noise</li>
+        <li><strong>Limited Data Optimization:</strong> Effective performance with small training datasets</li>
+        <li><strong>Cross-domain Transfer:</strong> Enables model transfer between different urban environments</li>
+      </ul>
+    </div>
+
+    <div class="topic-card stnet-architecture">
+      <h3><i class="fas fa-sitemap"></i> STNet Architecture Visualization</h3>
+      <p>The STNet architecture consists of multiple interconnected components designed for robust slum detection in challenging urban environments.</p>
+      
+      <div class="image-container">
+        <img src="images/stnet_archi.png" alt="STNet Architecture Diagram" class="architecture-image" />
+        <div class="caption">
+           Simplified schematic of the STnet architecture, comprising five convolutional variants in the entry-flow, succeeded by feature pyramid pooling layers
+ and a classification- flow in the end. This light-weight architecture encompasses 3.3 million trainable parameters
+        </div>
+      </div>
+      
+      
+    </div>
+
+    <div class="topic-card">
+      <h3><i class="fas fa-file-alt"></i> Research Paper: STNet for Slum Detection</h3>
+      
+      <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+      <ul>
+        <li><strong>Title:</strong> "Quantifying uncertainty in slum detection: Advancing transfer learning with limited data in noisy urban environments"</li>
+        <li><strong>Authors:</strong> Stark, E., Roozbahani, N., Sheykhmousa, M., Fritz, S., & See, L.</li>
+        
+      </ul>
+      <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Quantifying_Uncertainty_in_Slum_Detection_Advancing_Transfer_Learning_With_Limited_Data_in_Noisy_Urban_Environments.pdf" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+
+    <div class="github-card">
+      <div class="github-header">
+        <i class="fab fa-github"></i>
+        <h5>Repository</h5>
+      </div>
+      <p><strong>Source:</strong> <a href="https://github.com/nichula01/Slum-Detection-Using-STnet-model" class="github-link" target="_blank">nichula01/Slum-Detection-Using-STnet-model</a></p>
+      <p>Complete STNet implementation for slum detection with uncertainty quantification</p>
+      <p>This repository contains the full implementation of the STNet model adapted for slum detection tasks</p>
+    </div>
+
+    <div class="topic-card mumbai-work">
+      <h3><i class="fas fa-city"></i> STNet Implementation Results <span class="validation-badge"></h3>
+      <p>Implementation and evaluation of STNet model for slum detection, focusing on uncertainty quantification and transfer learning capabilities in urban environments.</p>
+      
+      <div class="work-stats">
+        <div class="stat-card">
+          <span class="stat-number">85%</span>
+          <div class="stat-label">Implementation Progress</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">3</span>
+          <div class="stat-label">Model Variants</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">2</span>
+          <div class="stat-label">Datasets Tested</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">95%</span>
+          <div class="stat-label">Uncertainty Calibration</div>
+        </div>
+      </div>
+      
+      <h4><i class="fas fa-chart-line"></i> Implementation Progress</h4>
+      <p>The STNet model has been successfully adapted for slum detection tasks, with particular emphasis on uncertainty quantification mechanisms and transfer learning optimization for limited data scenarios.</p>
+    </div>
+
+    <div class="topic-card">
+  <h3><i class="fas fa-images"></i> Training Results Visualization</h3>
+  <p>Visual analysis of model training progress and performance metrics showing loss curves, IoU trends, and confusion matrix results.</p>
+  
+  <div class="image-sequence">
+    <div class="image-card">
+      <img src="images/stnetresults.png" alt="Classification Report" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-chart-bar"></i> Classification Report</h5>
+        <p>Classification report showing precision, recall, and F1-scores for each class with overall accuracy of 69%</p>
+      </div>
+    </div>
+    
+    <div class="image-card">
+      <img src="images/stnetconfusion.png" alt="Confusion Matrix" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-table"></i> Confusion Matrix</h5>
+        <p>Detailed classification results showing model performance across all three classes. Background class shows highest accuracy, while slum detection achieved moderate performance with some confusion between urban and slum classes.</p>
+      </div>
+    </div>
+    
+    <div class="image-card">
+      <img src="images/stnetoverall.png" alt="Classification Report" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-chart-bar"></i> Classification Report</h5>
+        <p>Classification report showing precision, recall, and F1-scores for each class with overall accuracy of 69%</p>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="images/mumbai.png" alt="Confusion Matrix" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-table"></i> Mumbai RGB image</h5>
+        
+      <div class="image-card">
+      <img src="images/mumbaipredict.png" alt="Confusion Matrix" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-table"></i> Uncertainity of slum areas in mumbai</h5>
+        
+      </div>
+  </div>
+</div>
+    <div class="topic-card results-analysis">
+  <h3><i class="fas fa-analytics"></i> Performance Analysis</h3>
+  <p>Detailed analysis of STNet model performance across different metrics, with special focus on uncertainty calibration and transfer learning effectiveness.</p>
+
+  <div class="performance-grid">
+    <div class="performance-card">
+      <h5>Overall Accuracy</h5>
+      <span class="performance-value">77.0%</span>
+      <div class="performance-description">Overall accuracy on the validation set</div>
+    </div>
+
+    <div class="performance-card">
+      <h5>Precision</h5>
+      <span class="performance-value">80.0%</span>
+      <div class="performance-description">Macro average of class-wise precision</div>
+    </div>
+
+    <div class="performance-card">
+      <h5>Recall</h5>
+      <span class="performance-value">74.0%</span>
+      <div class="performance-description">Macro average of class-wise recall</div>
+    </div>
+
+    <div class="performance-card">
+      <h5>F1-Score</h5>
+      <span class="performance-value">75.0%</span>
+      <div class="performance-description">Macro average of class-wise F1 score</div>
+    </div>
+
+    <div class="performance-card">
+      <h5>Weighted Precision</h5>
+      <span class="performance-value">78.0%</span>
+      <div class="performance-description">Weighted precision considering support</div>
+    </div>
+
+    <div class="performance-card">
+      <h5>Weighted Recall</h5>
+      <span class="performance-value">77.0%</span>
+      <div class="performance-description">Weighted recall considering support</div>
+    </div>
+
+    <div class="performance-card">
+      <h5>Weighted F1-Score</h5>
+      <span class="performance-value">76.0%</span>
+      <div class="performance-description">Weighted F1 score considering support</div>
+    </div>
+  </div>
+
+  <div class="analysis-highlight">
+    <p><strong>Key Finding:</strong> The STNet model performs well overall, with the highest precision (0.89) on the Slum class and excellent recall (0.98) for the Background class. Balanced F1-scores indicate robustness across categories.</p>
+  </div>
+</div>
+
+    <
+    <div class="topic-card">
+      <h3><i class="fas fa-exclamation-triangle"></i> Challenges and Solutions</h3>
+      <p>Key challenges encountered during STNet implementation and the solutions developed to address them.</p>
+      
+      <h4><i class="fas fa-bug"></i> Technical Challenges</h4>
+      <ul>
+        <li><strong>Uncertainty Calibration:</strong> Ensuring reliable confidence estimates across different domains</li>
+        <li><strong>Limited Data:</strong> Achieving good performance with small training datasets</li>
+        <li><strong>Noise Handling:</strong> Robust performance despite annotation inconsistencies</li>
+        <li><strong>Computational Efficiency:</strong> Balancing model complexity with inference speed</li>
+      </ul>
+      
+      <h4><i class="fas fa-lightbulb"></i> Implemented Solutions</h4>
+      <ul>
+        <li><strong>Monte Carlo Dropout:</strong> Efficient uncertainty estimation during inference</li>
+        <li><strong>Data Augmentation:</strong> Synthetic data generation for improved generalization</li>
+        <li><strong>Robust Loss Functions:</strong> Loss functions resilient to label noise</li>
+        <li><strong>Progressive Training:</strong> Staged training approach for optimal convergence</li>
+      </ul>
+    </div>
+
+    <div class="next-week">
+      <h3><i class="fas fa-forward"></i> Week 8 Planning: Model Optimization and Validation</h3>
+      <ul>
+        <li>Unet model implementation for Mumbai dataset</li>
+        <li>Analyse results from unet model</li>
+        <li>Comparative analysis of stnet and unet models</li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p class="footer-text">© 2024 E/20/425 - Research Project Documentation</p>
+  </footer>
+
+  <script>
+    // Dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdown = document.querySelector('.dropdown');
+      const dropdownContent = document.querySelector('.dropdown-content');
+      
+      dropdown.addEventListener('click', function() {
+        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!dropdown.contains(event.target)) {
+          dropdownContent.style.display = 'none';
+        }
+      });
+    });
+
+    // Smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Add loading animation for images
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('img');
+      images.forEach(img => {
+        img.addEventListener('load', function() {
+          this.style.opacity = '1';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
