@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 9 – Study about how to use Sentinel-2 MSI images for slum detection</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #ffffff;
+      --secondary-color: #f8f9fa;
+      --accent-color: #0066cc;
+      --text-color: #2c3e50;
+      --earth-green: #28a745;
+      --earth-brown: #8d6e63;
+      --space-blue: #3f51b5;
+      --card-bg: rgba(248, 249, 250, 0.8);
+      --progress-bg: rgba(40, 167, 69, 0.15);
+      --code-bg: rgba(248, 249, 250, 0.9);
+      --highlight-orange: #fd7e14;
+      --warning-red: #dc3545;
+      --colombo-blue: #1e40af;
+      --validation-green: #198754;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 20px var(--shadow-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px var(--shadow-medium);
+      z-index: 101;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 0 2px 4px var(--shadow-light);
+      font-weight: 700;
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 8px;
+      padding: 12px 24px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid rgba(40, 167, 69, 0.2);
+      color: var(--validation-green);
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px var(--shadow-light);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px var(--shadow-medium);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .research-paper {
+      background: linear-gradient(135deg, rgba(63, 81, 181, 0.05), rgba(255, 255, 255, 0.9));
+      border-left: 4px solid var(--space-blue);
+      margin-bottom: 3rem;
+    }
+    
+    .pdf-viewer-section {
+      margin-top: 2rem;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px var(--shadow-light);
+    }
+    
+    .pdf-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border-color);
+    }
+    
+    .pdf-container iframe {
+      border: none;
+      display: block;
+    }
+    
+    .comparison-table {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      margin: 2rem 0;
+    }
+    
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .comparison-table th {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+    
+    .comparison-table tr:hover {
+      background-color: rgba(0, 102, 204, 0.05);
+    }
+    
+    .methodology-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .method-card {
+      background-color: rgba(40, 167, 69, 0.08);
+      border-radius: 10px;
+      padding: 1.5rem;
+      border: 1px solid rgba(40, 167, 69, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .method-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--shadow-light);
+    }
+    
+    .method-card h5 {
+      color: var(--earth-green);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .method-card h5 i {
+      color: var(--accent-color);
+    }
+    
+    .accuracy-badge {
+      display: inline-block;
+      background-color: var(--validation-green);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    
+    .insights-highlight {
+      background-color: rgba(253, 126, 20, 0.1);
+      border-left: 4px solid var(--highlight-orange);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      border: 1px solid rgba(253, 126, 20, 0.2);
+    }
+    
+    .insights-highlight h5 {
+      color: var(--highlight-orange);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .insights-highlight h5 i {
+      color: var(--highlight-orange);
+    }
+    
+    .next-week {
+      background-color: rgba(63, 81, 181, 0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 1px solid rgba(63, 81, 181, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
+      padding-left: 2rem;
+      border: 1px solid var(--border-color);
+      transition: background-color 0.3s;
+    }
+    
+    .next-week ul li:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -4px 20px var(--shadow-light);
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.6;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+      
+      .methodology-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparison-table {
+        overflow-x: auto;
+      }
+    }    
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  
+  <header class="page-header">
+    <h1>Week 9: Study about how to use Sentinel-2 MSI images for slum detection</h1>
+    <p>Comprehensive analysis of state-of-the-art methodologies for slum detection and urban settlement mapping using satellite imagery</p>
+  </header>
+
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-book-open"></i> Week 9 Progress: Literature Review & Methodology Analysis</h3>
+      <p>This week focused on conducting a comprehensive literature review of current research in slum detection and urban settlement mapping. The analysis covers various methodologies, datasets, and performance metrics used in recent studies to understand the state-of-the-art approaches and identify potential improvements for our U-Net implementation.</p>
+      
+      <h4><i class="fas fa-search"></i> Research Scope & Objectives</h4>
+      <ul>
+        <li><strong>Methodology Comparison:</strong> Analysis of deep learning vs traditional machine learning approaches</li>
+        <li><strong>Dataset Evaluation:</strong> Review of different satellite imagery sources and their effectiveness</li>
+        <li><strong>Performance Benchmarking:</strong> Comparison of accuracy metrics across different studies</li>
+        <li><strong>Feature Engineering:</strong> Investigation of spectral indices and multi-temporal approaches</li>
+      </ul>
+      
+      <h4><i class="fas fa-target"></i> Key Research Questions</h4>
+      <ul>
+        <li>What are the most effective deep learning architectures for slum detection?</li>
+        <li>How do different satellite data sources (Sentinel-2, Landsat, high-resolution) compare?</li>
+        <li>What role do spectral indices play in improving classification accuracy?</li>
+        <li>How can multi-temporal analysis enhance slum detection capabilities?</li>
+      </ul>
+    </div>
+
+    <!-- Paper 1: Mapping Human Settlements -->
+    <div class="topic-card research-paper">
+      <h3><i class="fas fa-file-alt"></i> Research Paper 1: Human Settlement Mapping</h3>
+      <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+      <ul>
+        <li><strong>Title:</strong> "Mapping Human Settlements with Multi-seasonal Sentinel-2 Imagery and Attention-based ResNeXt"</li>
+        <li><strong>Authors:</strong> Chunping Qiu, Michael Schmitt, Hannes Taubenböck, Xiao Xiang Zhu</li>
+        <li><strong>Conference:</strong> IEEE International Geoscience and Remote Sensing Symposium (IGARSS)</li>
+        
+      </ul>
+      
+      <h4><i class="fas fa-key"></i> Key Contributions</h4>
+      <ul>
+        <li>Proposes attention-based ResNeXt architecture for settlement mapping</li>
+        <li>Uses multi-seasonal Sentinel-2 imagery for improved classification</li>
+        <li>Achieves 91% accuracy in human settlement detection</li>
+        <li>Compares results with state-of-the-art products (GUF, GHSL)</li>
+      </ul>
+      
+      <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Mapping Human Settlements with Multi-seasonal.pdf" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+
+    <!-- Paper 2: Mapping Slums -->
+    <div class="topic-card research-paper">
+      <h3><i class="fas fa-file-alt"></i> Research Paper 2: Slum Detection with Deep Learning</h3>
+      <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+      <ul>
+        <li><strong>Title:</strong> "Mapping Slums with Deep Learning Feature Extraction"</li>
+        <li><strong>Authors:</strong> Agatha Mattos, Michela Bertolotto, Gavin McArdle</li>
+        <li><strong>Conference:</strong> CDCEO 2022: 2nd Workshop on Complex Data Challenges in Earth Observation</li>
+        <li><strong>DOI:</strong> Not available</li>
+      </ul>
+      
+      <h4><i class="fas fa-key"></i> Key Contributions</h4>
+      <ul>
+        <li>Presents unsupervised deep learning approach for slum detection</li>
+        <li>Uses ResNet18 feature extraction with k-means clustering</li>
+        <li>Evaluates method on Sentinel-2 imagery of Mumbai and Cape Town</li>
+        <li>Compares with supervised ResNet18 baseline (0.51 vs 0.31 mean IoU)</li>
+      </ul>
+      
+      <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Mapping Slums with Deep Learning Feature Extraction.pdf" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+    </div>
+
+    <!-- Paper 3: Urban Classification -->
+    <div class="topic-card research-paper">
+      <h3><i class="fas fa-file-alt"></i> Research Paper 3: Urban Classification with Sentinel-2 satelite data</h3>
+      <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+      <ul>
+        <li><strong>Title:</strong> "Urban Classification Based on Sentinel-2 Satellite Data for Slum Identification"</li>
+        <li><strong>Authors:</strong> Kiatkulchai Jitt-Aer, Hiroyuki Miyazaki</li>
+        <li><strong>Conference:</strong> 7th TICC International Conference 2023</li>
+        <li><strong>DOI:</strong> Not available</li>
+      </ul>
+      
+      <h4><i class="fas fa-key"></i> Key Contributions</h4>
+      <ul>
+        <li>Applies SVM and Random Forest for slum identification</li>
+        <li>Uses Sentinel-2 data in Bangkok, Thailand</li>
+        <li>Achieves 72% overall accuracy with Random Forest</li>
+        <li>Analyzes producer's (73%) vs user's (44%) accuracy for slums</li>
+      </ul>
+      
+      <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/Urban Classification Based on Sentinel-2.pdf" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+    </div>
+
+    <!-- Paper 4: Spectral Indices -->
+    <div class="topic-card research-paper">
+      <h3><i class="fas fa-file-alt"></i> Research Paper 4: Composite Slum Spectral Indices</h3>
+      <h4><i class="fas fa-scroll"></i> Paper Details</h4>
+      <ul>
+        <li><strong>Title:</strong> "Mapping Slums in Mumbai, India, Using Sentinel-2 Imagery: Evaluating Composite Slum Spectral Indices (CSSIs)"</li>
+        <li><strong>Authors:</strong> Feifei Peng, Wei Lu, Yunfeng Hu, Liangcun Jiang</li>
+        <li><strong>Journal:</strong> Remote Sensing</li>
+        <li><strong>DOI:</strong> 10.3390/rs14092129</li>
+      </ul>
+      
+      <h4><i class="fas fa-key"></i> Key Contributions</h4>
+      <ul>
+        <li>Introduces novel Composite Slum Spectral Indices (CSSIs)</li>
+        <li>Evaluates performance on Mumbai slum detection</li>
+        <li>Compares with traditional spectral indices (NDVI, NDBI, etc.)</li>
+        <li>Achieves improved discrimination between slum and non-slum areas</li>
+      </ul>
+      <div class="pdf-viewer-section">
+        <div class="pdf-container">
+          <iframe src="resources/spectralindices.pdf" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+      <div class="insights-highlight">
+        <h5><i class="fas fa-lightbulb"></i> Key Innovation</h5>
+        <p>This paper introduces specialized spectral indices designed specifically for slum detection, moving beyond traditional vegetation and built-up indices to create composite measures that better capture the unique spectral characteristics of informal settlements.</p>
+      </div>
+    </div>
+
+    
+
+    
+    <div class="topic-card">
+      <h3><i class="fas fa-cogs"></i> Implementation Strategy for Next Phase</h3>
+      <p>Based on the literature review findings, the following implementation strategy is proposed for enhancing our U-Net model:</p>
+      
+      <h4><i class="fas fa-layer-group"></i> Architecture Enhancements</h4>
+      <ul>
+        <li><strong>Attention U-Net:</strong> Integrate attention gates in skip connections</li>
+        <li><strong>Multi-scale Features:</strong> Implement pyramid pooling modules</li>
+        <li><strong>Residual Connections:</strong> Add residual blocks for deeper networks</li>
+        
+      </ul>
+      
+      <h4><i class="fas fa-database"></i> Data Enhancement Strategy</h4>
+      <ul>
+        <li><strong>Multi-spectral Bands:</strong> Utilize all Sentinel-2 bands</li>
+        <li><strong>Spectral Indices:</strong> Compute NDVI, NDBI, CSSIs</li>
+        <li><strong>Temporal Analysis:</strong> Multi-seasonal image stacks</li>
+        <li><strong>Data Augmentation:</strong> Advanced geometric and spectral augmentations</li>
+      </ul>
+    </div>
+
+    <div class="next-week">
+      <h3><i class="fas fa-calendar-week"></i> Week 10  Plan</h3>
+      <ul>
+        
+        <li>study about how to Integrate multi-spectral Sentinel-2 data processing</li>
+        <li>Develop spectral indices computation pipeline</li>
+        
+        <li>Prepare baseline comparisons with reviewed methods</li>
+        <li>Document methodology improvements and expected outcomes</li>
+        <li>Begin implementation of enhanced U-Net variants</li>
+      </ul>
+    </div>
+
+    
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-researchgate"></i></a>
+      <a href="#"><i class="fab fa-academia"></i></a>
+    </div>
+    <p class="footer-text">&copy; 2024 E/20/425 - Research Progress Documentation. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdowns = document.querySelectorAll('.dropdown');
+      
+      dropdowns.forEach(dropdown => {
+        const dropbtn = dropdown.querySelector('.dropbtn');
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        
+        dropbtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!dropdown.contains(e.target)) {
+            dropdownContent.style.display = 'none';
+          }
+        });
+      });
+      
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+      
+      // Add loading animation for PDF iframes
+      const iframes = document.querySelectorAll('iframe');
+      iframes.forEach(iframe => {
+        iframe.addEventListener('load', function() {
+          this.style.opacity = '1';
+        });
+        iframe.style.opacity = '0.8';
+        iframe.style.transition = 'opacity 0.3s ease';
+      });
+      
+      // Highlight current week in navigation
+      const currentPage = 'week9.html';
+      const navLinks = document.querySelectorAll('.dropdown-content a');
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+          link.style.backgroundColor = 'var(--accent-color)';
+          link.style.color = 'white';
+        }
+      });
+      
+      // Add scroll-triggered animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      });
+      
+      document.querySelectorAll('.topic-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+      });
+    });
+  </script>
+</body>
+</html>
