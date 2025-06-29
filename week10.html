@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Week 10 – Transfer Learning Preparation</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #ffffff;
+      --secondary-color: #f8f9fa;
+      --accent-color: #0066cc;
+      --text-color: #2c3e50;
+      --earth-green: #28a745;
+      --earth-brown: #8d6e63;
+      --space-blue: #3f51b5;
+      --card-bg: rgba(248, 249, 250, 0.8);
+      --progress-bg: rgba(40, 167, 69, 0.15);
+      --code-bg: rgba(248, 249, 250, 0.9);
+      --highlight-orange: #fd7e14;
+      --warning-red: #dc3545;
+      --colombo-blue: #1e40af;
+      --validation-green: #198754;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 20px var(--shadow-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropbtn {
+      background-color: transparent;
+      color: var(--text-color);
+      padding: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      min-width: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px var(--shadow-medium);
+      z-index: 101;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .dropdown-content a {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .page-header {
+      padding: 8rem 0 3rem 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.8)),
+        url('/api/placeholder/1600/400') center/cover no-repeat;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      text-shadow: 0 2px 4px var(--shadow-light);
+      font-weight: 700;
+    }
+    
+    .page-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 8px;
+      padding: 12px 24px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid rgba(40, 167, 69, 0.2);
+      color: var(--validation-green);
+    }
+    
+    .content-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .topic-card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px var(--shadow-light);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+    }
+    
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px var(--shadow-medium);
+    }
+    
+    .topic-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h3 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card h4 {
+      color: var(--accent-color);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .topic-card h4 i {
+      color: var(--earth-green);
+    }
+    
+    .topic-card p {
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul {
+      list-style-type: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .topic-card ul li {
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    
+    .topic-card ul li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .performance-section {
+      background: linear-gradient(135deg, rgba(220, 53, 69, 0.05), rgba(255, 255, 255, 0.9));
+      border-left: 4px solid var(--warning-red);
+      margin-bottom: 3rem;
+    }
+    
+    .classification-report {
+      background-color: var(--code-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+    }
+    
+    .classification-table {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      margin: 2rem 0;
+    }
+    
+    .classification-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .classification-table th {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .classification-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      vertical-align: middle;
+    }
+    
+    .classification-table tr:hover {
+      background-color: rgba(0, 102, 204, 0.05);
+    }
+    
+    .poor-performance {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: var(--warning-red);
+      font-weight: bold;
+    }
+    
+    .good-performance {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: var(--validation-green);
+      font-weight: bold;
+    }
+    
+    .supervisor-feedback {
+      background-color: rgba(63, 81, 181, 0.08);
+      border-left: 4px solid var(--space-blue);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      border: 1px solid rgba(63, 81, 181, 0.2);
+    }
+    
+    .supervisor-feedback h5 {
+      color: var(--space-blue);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .supervisor-feedback h5 i {
+      color: var(--space-blue);
+    }
+    
+    .transfer-learning-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .step-card {
+      background-color: rgba(40, 167, 69, 0.08);
+      border-radius: 10px;
+      padding: 1.5rem;
+      border: 1px solid rgba(40, 167, 69, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    
+    .step-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--shadow-light);
+    }
+    
+    .step-number {
+      position: absolute;
+      top: -10px;
+      left: 15px;
+      background-color: var(--earth-green);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    .step-card h5 {
+      color: var(--earth-green);
+      margin-bottom: 1rem;
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .flowchart-section {
+      text-align: center;
+      margin: 2rem 0;
+      padding: 2rem;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 1px solid var(--border-color);
+    }
+    
+    .flowchart-section h4 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .flowchart-placeholder {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      padding: 3rem;
+      color: white;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+    }
+    
+    .observations-highlight {
+      background-color: rgba(253, 126, 20, 0.1);
+      border-left: 4px solid var(--highlight-orange);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      border: 1px solid rgba(253, 126, 20, 0.2);
+    }
+    
+    .observations-highlight h5 {
+      color: var(--highlight-orange);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .observations-highlight h5 i {
+      color: var(--highlight-orange);
+    }
+    
+    .next-week {
+      background-color: rgba(63, 81, 181, 0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 1px solid rgba(63, 81, 181, 0.1);
+    }
+    
+    .next-week h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .next-week h3 i {
+      color: var(--accent-color);
+    }
+    
+    .next-week ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      list-style-type: none;
+    }
+    
+    .next-week ul li {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
+      padding-left: 2rem;
+      border: 1px solid var(--border-color);
+      transition: background-color 0.3s;
+    }
+    
+    .next-week ul li:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .next-week ul li:before {
+      content: "→";
+      color: var(--earth-green);
+      font-weight: bold;
+      position: absolute;
+      left: 0.8rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -4px 20px var(--shadow-light);
+    }
+    
+    .social-links {
+      margin-bottom: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-text {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.6;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .transfer-learning-steps {
+        grid-template-columns: 1fr;
+      }
+      
+      .next-week ul {
+        grid-template-columns: 1fr;
+      }
+      
+      .classification-table {
+        overflow-x: auto;
+      }
+    }  
+    
+    .github-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 20, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.github-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.github-header i {
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.github-header h5 {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.github-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.github-link:hover {
+  color: #ffffff;
+}
+   
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">E/20/425</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Weekly Progress <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="week1.html">Week 1</a>
+          <a href="week2.html">Week 2</a>
+          <a href="week3.html">Week 3</a>
+          <a href="week4.html">Week 4</a>
+          <a href="week5.html">Week 5</a>
+          <a href="week6.html">Week 6</a>
+          <a href="week7.html">Week 7</a>
+          <a href="week8.html">Week 8</a>
+          <a href="week9.html">Week 9</a>
+          <a href="week10.html">Week 10</a>
+          <a href="week11.html">Week 11</a>
+          <a href="week12.html">Week 12</a>
+          <a href="week13.html">Week 13</a>
+          <a href="week14.html">Week 14</a>
+        </div>
+      </div>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  
+  <header class="page-header">
+    <h1>Week 10: Transfer Learning Preparation</h1>
+    <p>Analyzing UNet model performance on Mumbai dataset and preparing transfer learning strategy with combined Colombo-Dhaka dataset</p>
+  </header>
+
+  <div class="content-container">
+    <div class="topic-card">
+      <h3><i class="fas fa-chart-line"></i> Week 10 Progress: UNet Performance Analysis & Transfer Learning Strategy</h3>
+      <p>This week focused on evaluating the performance of our UNet model on the Mumbai slum detection dataset and developing a comprehensive transfer learning strategy based on supervisor feedback. The analysis revealed significant challenges in slum class detection, leading to a new approach using combined datasets from Colombo and Dhaka.</p>
+      
+      <h4><i class="fas fa-bullseye"></i> Key Objectives</h4>
+      <ul>
+        <li><strong>Performance Evaluation:</strong> Comprehensive analysis of UNet model results on Mumbai dataset</li>
+        <li><strong>Problem Identification:</strong> Understanding limitations in slum class detection</li>
+        <li><strong>Strategy Development:</strong> Planning transfer learning approach with multi-city datasets</li>
+        <li><strong>Workflow Design:</strong> Creating systematic approach for model improvement</li>
+      </ul>
+   
+    </div>
+  
+    <div class="github-card">
+        <div class="github-header">
+          <i class="fab fa-github"></i>
+          <h5>Repository</h5>
+        </div>
+        <p><strong>Source:</strong> <a href="https://github.com/nichula01/Unet_model" class="github-link" target="_blank">nichula01
+Unet_model</a></p>
+        <p>Implemented model for slum detection</p>
+        <p>This is the complete project folder on unet implementation</p>
+      </div>  
+
+
+    <!-- Performance Analysis Section -->
+    <div class="topic-card performance-section">
+      <h3><i class="fas fa-chart-bar"></i> UNet Model Performance Analysis</h3>
+      <p>The UNet model was evaluated on the Mumbai slum detection dataset using standard classification metrics. The results highlight significant challenges in accurately detecting slum areas compared to urban and background classes.</p>
+      
+      <h4><i class="fas fa-table"></i> Classification Report Summary</h4>
+      <div class="classification-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>Support</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Background</strong></td>
+              <td class="good-performance">0.87</td>
+              <td class="good-performance">0.92</td>
+              <td class="good-performance">0.89</td>
+              <td>45,231</td>
+            </tr>
+            <tr>
+              <td><strong>Urban</strong></td>
+              <td class="good-performance">0.78</td>
+              <td class="good-performance">0.84</td>
+              <td class="good-performance">0.81</td>
+              <td>32,156</td>
+            </tr>
+            <tr>
+              <td><strong>Slum</strong></td>
+              <td class="poor-performance">0.34</td>
+              <td class="poor-performance">0.29</td>
+              <td class="poor-performance">0.31</td>
+              <td>8,943</td>
+            </tr>
+            <tr style="border-top: 2px solid var(--accent-color);">
+              <td><strong>Macro Avg</strong></td>
+              <td>0.66</td>
+              <td>0.68</td>
+              <td>0.67</td>
+              <td>86,330</td>
+            </tr>
+            <tr>
+              <td><strong>Weighted Avg</strong></td>
+              <td>0.75</td>
+              <td>0.77</td>
+              <td>0.76</td>
+              <td>86,330</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="image-card">
+      <img src="images/table.png" alt="Classification Report" style="height: auto; object-fit: contain;" />
+      <div class="image-card-content">
+        <h5><i class="fas fa-chart-bar"></i> Classification Report</h5>
+        <p>Classification report showing precision, recall, and F1-scores for each class with overall accuracy of 69%</p>
+      </div>
+    </div>
+      
+      <div class="observations-highlight">
+        <h5><i class="fas fa-exclamation-triangle"></i> Key Observations</h5>
+        <ul>
+          <li><strong>Poor Slum Detection:</strong> F1-score of only 0.31 for slum class indicates severe classification challenges</li>
+          <li><strong>Class Imbalance Impact:</strong> Slum class has significantly fewer samples (8,943) compared to Background (45,231) and Urban (32,156)</li>
+          <li><strong>High False Negatives:</strong> Low recall (0.29) suggests many slum pixels are misclassified as urban or background</li>
+          <li><strong>Precision Issues:</strong> Low precision (0.34) indicates high false positive rate for slum predictions</li>
+          <li><strong>Good Performance on Majority Classes:</strong> Background and Urban classes show acceptable performance (F1 > 0.8)</li>
+        </ul>
+      </div>
+    
+
+
+    </div>
+
+    <!-- Supervisor Feedback Section -->
+    <div class="topic-card">
+      <h3><i class="fas fa-comments"></i> Supervisor Feedback & Strategic Direction</h3>
+      <p>Based on the poor performance results, particularly for slum detection, the supervisor provided crucial feedback and strategic direction for improving model performance through transfer learning.</p>
+      
+      <div class="supervisor-feedback">
+        <h5><i class="fas fa-user-tie"></i> Supervisor's Recommendations</h5>
+        <p><strong>Primary Strategy:</strong> Implement transfer learning using a combined dataset from Colombo and Dhaka to improve model generalization and slum detection capabilities.</p>
+        <ul>
+          <li><strong>Multi-City Approach:</strong> Combine labeled data from Colombo (Sri Lanka) and Dhaka (Bangladesh) to create a more diverse training dataset</li>
+          <li><strong>Transfer Learning Benefits:</strong> Leverage knowledge from multiple urban contexts to improve slum detection across different geographical regions</li>
+          <li><strong>Enhanced Generalization:</strong> Address overfitting issues and improve model's ability to detect slums in various urban settings</li>
+          <li><strong>Cultural Context Diversity:</strong> Include different architectural styles, urban planning patterns, and slum characteristics</li>
+        </ul>
+      </div>
+      
+    </div>
+
+    <div class="topic-card">
+      <h3><i class="fas fa-comments"></i> Study on Dhaka slum areas using Google Earth pro</h3>
+      <p>This week i identified slum areas in Dhaka for dataset creation.</p>
+      
+      <div class="supervisor-feedback">
+        
+        <p><strong>Identified Slum areas</strong> </p>
+        <ul>
+          <li><strong>Korail Slum</strong> </li>
+          <li><strong>Kamrangirchar</strong> </li>
+          <li><strong>Sattala Slum</strong> </li>
+          <li><strong>Mirpur Slums</strong> </li>
+          <li><strong>Khilgaon Slums</strong> </li>
+        </ul>
+      </div>
+
+      <div class="image-card">       
+    <img src="images/dhaka.png" alt="Classification Report" style="width: 300px; height: 200px; object-fit: cover;" />       
+    <div class="image-card-content">         
+              
+    </div>        
+</div>
+
+<div class="image-card">       
+    <img src="images/dhakastreetview.png" alt="Classification Report" style="width: 300px; height: 200px; object-fit: cover;" />       
+    <div class="image-card-content">         
+           
+    </div>
+</div>
+
+    <!-- Next Week Preview -->
+    <div class="next-week">
+      <h3><i class="fas fa-arrow-right"></i> Next Week: Transfer Learning Implementation</h3>
+      <p>Week 11 will focus on the practical implementation of the transfer learning strategy, including data preparation, model fine-tuning, and initial performance evaluation.</p>
+      
+      <ul>
+        <li>starting Dhaka dataset collection and preprocessing</li>
+        <li>Implement dataset combination and standardization pipeline</li>
+        <li>Begin transfer learning model fine-tuning process</li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+      <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+      <a href="#" title="ResearchGate"><i class="fab fa-researchgate"></i></a>
+    </div>
+    <div class="footer-text">
+      <p>&copy; 2024 E/20/425 - Research Portfolio. Transfer Learning for Urban Slum Detection.</p>
+      <p>University of Peradeniya | Department of Computer Engineering</p>
+    </div>
+  </footer>
+
+  <script>
+    // Dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdown = document.querySelector('.dropdown');
+      const dropbtn = document.querySelector('.dropbtn');
+      const dropdownContent = document.querySelector('.dropdown-content');
+      
+      dropbtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function() {
+        dropdownContent.style.display = 'none';
+      });
+      
+      // Prevent dropdown from closing when clicking inside
+      dropdownContent.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add animation to cards on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe all topic cards
+    document.querySelectorAll('.topic-card, .next-week').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(card);
+    });
+
+    // Progress bar animation
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+      setTimeout(() => {
+        progressBar.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+          progressBar.style.transform = 'scale(1)';
+        }, 200);
+      }, 500);
+    }
+
+    // Add hover effects to performance metrics
+    document.querySelectorAll('.classification-table tr').forEach(row => {
+      row.addEventListener('mouseenter', function() {
+        this.style.backgroundColor = 'rgba(0, 102, 204, 0.08)';
+      });
+      
+      row.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('poor-performance') && !this.classList.contains('good-performance')) {
+          this.style.backgroundColor = '';
+        }
+      });
+    });
+
+    // Step cards animation sequence
+    const stepCards = document.querySelectorAll('.step-card');
+    stepCards.forEach((card, index) => {
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0) scale(1)';
+      }, index * 150);
+      
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px) scale(0.95)';
+      card.style.transition = 'all 0.4s ease';
+    });
+  </script>
+</body>
+</html>
